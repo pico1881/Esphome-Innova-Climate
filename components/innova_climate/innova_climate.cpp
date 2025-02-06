@@ -173,6 +173,8 @@ void Innova::control(const climate::ClimateCall &call) {
                 ESP_LOGW(TAG, "Unsupported mode: %d", mode); 
             break;
         }
+	    	    ESP_LOGD(TAG, "Mode set to: ", this->mode);
+	    ESP_LOGD(TAG, "Mode set to: ", mode);
     }
 
     if (call.get_fan_mode().has_value()) {
@@ -197,6 +199,8 @@ void Innova::control(const climate::ClimateCall &call) {
                 new_prg = (curr_prg & ~(0b111)) | 1;
             break;
         }
+	    ESP_LOGD(TAG, "Fan mode set to: ", this->fan_mode);
+	    ESP_LOGD(TAG, "Fan mode set to: ", fan_mode);
         add_to_queue(CMD_WRITE_REG, new_prg, INNOVA_PROGRAM);
     }
     
