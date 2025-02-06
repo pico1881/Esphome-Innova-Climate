@@ -8,12 +8,13 @@ static const char *const TAG = "innova";
 static const uint8_t CMD_READ_REG = 0x03;
 static const uint8_t CMD_WRITE_REG = 0x06;
 static const uint16_t INNOVA_AIR_TEMPERATURE = 0x00;    // reg 0
-static const uint16_t INNOVA_WATER_TEMPERATURE = 0x01;  // reg 1
+//static const uint16_t INNOVA_WATER_TEMPERATURE = 0x01;  // reg 1
 static const uint16_t INNOVA_FAN_SPEED = 0x0F;          // reg 15
 static const uint16_t INNOVA_PROGRAM = 0xC9;            // reg 201
 static const uint16_t INNOVA_SEASON = 0xE9;             // reg 233
 static const uint16_t INNOVA_SETPOINT = 0xE7;           // reg 231
-static const uint16_t REGISTER[] = {INNOVA_AIR_TEMPERATURE, INNOVA_SETPOINT, INNOVA_FAN_SPEED, INNOVA_PROGRAM, INNOVA_SEASON, INNOVA_WATER_TEMPERATURE};
+//static const uint16_t REGISTER[] = {INNOVA_AIR_TEMPERATURE, INNOVA_SETPOINT, INNOVA_FAN_SPEED, INNOVA_PROGRAM, INNOVA_SEASON, INNOVA_WATER_TEMPERATURE};
+static const uint16_t REGISTER[] = {INNOVA_AIR_TEMPERATURE, INNOVA_SETPOINT, INNOVA_FAN_SPEED, INNOVA_PROGRAM, INNOVA_SEASON};
 
 void Innova::setup() {}
 
@@ -42,19 +43,19 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
     switch (this->state_) {
         case 1:
             value /= 10.0;
-            this->current_temp_ = value;
+            //this->current_temp_ = value;
             this->current_temperature = value;
-            //ESP_LOGD(TAG, "Air temperature=%.1f", this->current_temp_);
+            ESP_LOGD(TAG, "Air temperature=%.1f", this->current_temp_);
         break;
         case 2:
             value /= 10.0;
-            this->target_temp_ = value;
+            //this->target_temp_ = value;
             this->target_temperature = value;    
-            //ESP_LOGD(TAG, "Setpoint temperature=%.1f", this->target_temp_);
+            ESP_LOGD(TAG, "Setpoint temperature=%.1f", this->target_temp_);
         break;
         case 3:
             this->fan_speed_ = value;   
-            //ESP_LOGD(TAG, "Fan speed=%d", this->fan_speed_);
+            ESP_LOGD(TAG, "Fan speed=%d", this->fan_speed_);
         break;
         case 4:
             this->program_ = value;   
@@ -67,7 +68,7 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
                 default: fmode = climate::CLIMATE_FAN_MEDIUM; break;
             }
             this->fan_mode = fmode;    
-            //ESP_LOGD(TAG, "Program=%d", this->program_);
+            ESP_LOGD(TAG, "Program=%d", this->program_);
         break;
         case 5:
             this->season_ = value;   
@@ -89,15 +90,15 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
             } else {
                 this->action = climate::CLIMATE_ACTION_IDLE;  
             }
-            //ESP_LOGD(TAG, "Season=%d", this->season_);
+            ESP_LOGD(TAG, "Season=%d", this->season_);
         break;
-        case 6:
-            value /= 10.0;
-            this->water_temp_ = value;   
-            //ESP_LOGD(TAG, "Water temperature=%.1f", this->water_temp_);
-        break;
+//        case 6:
+ //           value /= 10.0;
+ //           this->water_temp_ = value;   
+ //           //ESP_LOGD(TAG, "Water temperature=%.1f", this->water_temp_);
+ //       break;
     }
-    if (++this->state_ > 6){
+    if (++this->state_ > 5){
         this->state_ = 0;
     	this->publish_state();
     }
