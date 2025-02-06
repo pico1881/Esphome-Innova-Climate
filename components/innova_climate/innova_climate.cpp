@@ -117,26 +117,11 @@ void Innova::update() {
     this->state_ = 1;
 }
 
-//void Innova::add_to_queue(uint8_t function, float new_value, uint16_t address) {
-//    WriteableData data;
-//    data.function_value = function;
-//    data.write_value = new_value;
-//    data.register_value = address;
-//    writequeue_.emplace_back(data);
-    //ESP_LOGD(TAG, "Data write pending: function (%i), value (%i), address (%i)", data.function_value, data.write_value, data.register_value);
-//}
-
 void Innova::add_to_queue(uint8_t function, uint8_t new_value, uint16_t address) {
     WriteableData data{function, address, new_value};
     writequeue_.emplace_back(data);
     //ESP_LOGD(TAG, "Data write pending: function (%i), value (%i), address (%i)", data.function_value, data.write_value, data.register_value);
 }
-
-//void Innova::writeModbusRegister(WriteableData write_data) { 
-//    uint8_t payload[] = {(uint8_t)(write_data.write_value >> 8), (uint8_t)write_data.write_value };
-//    send( write_data.function_value,write_data.register_value,1,sizeof(payload),payload);
-//    this->waiting_for_write_ack_ = true ;
-//}
 
 void Innova::writeModbusRegister(WriteableData write_data) { 
     uint8_t payload[] = {static_cast<uint8_t>(write_data.write_value >> 8), static_cast<uint8_t>(write_data.write_value)};
@@ -152,19 +137,16 @@ void Innova::control(const climate::ClimateCall &call) {
         climate::ClimateMode mode = *call.get_mode();
         switch (mode) {
             case climate::CLIMATE_MODE_OFF:
-                //ESP_LOGD(TAG, "Set Climate Mode: OFF");
                 new_prg = curr_prg | (1 << 7);
                 add_to_queue(CMD_WRITE_REG,new_prg, INNOVA_PROGRAM);
 		
             break;
             case climate::CLIMATE_MODE_HEAT:
-                //ESP_LOGD(TAG, "Set Climate Mode: HEAT");
                 add_to_queue(CMD_WRITE_REG,3, INNOVA_SEASON);
                 new_prg = curr_prg & ~(1 << 7);  
                 add_to_queue(CMD_WRITE_REG,new_prg, INNOVA_PROGRAM);
             break;
             case climate::CLIMATE_MODE_COOL:
-                //ESP_LOGD(TAG, "Set Climate Mode:COOL");
                 add_to_queue(CMD_WRITE_REG,5, INNOVA_SEASON);
                 new_prg = curr_prg & ~(1 << 7);
                 add_to_queue(CMD_WRITE_REG,new_prg, INNOVA_PROGRAM);
