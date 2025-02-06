@@ -44,12 +44,10 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
         case 1:
             f_value /= 10.0;
             this->current_temperature = f_value;
-	ESP_LOGD(TAG, "temp=%.1f", this->current_temperature);
         break;
         case 2:
             f_value /= 10.0;
             this->target_temperature = f_value;   
-		ESP_LOGD(TAG, "target=%.1f", this->target_temperature);
         break;
         case 3:
             this->fan_speed_ = value;   
