@@ -61,7 +61,7 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
                 default: fmode = climate::CLIMATE_FAN_MEDIUM; break;
             }
             this->fan_mode = fmode;    
-           ESP_LOGD(TAG, "Program=%d", this->program_);
+           //ESP_LOGD(TAG, "Program=%d", this->program_);
         break;
         case 5:
             this->season_ = value;   
@@ -129,7 +129,7 @@ void Innova::update() {
 void Innova::add_to_queue(uint8_t function, uint8_t new_value, uint16_t address) {
     WriteableData data{function, address, new_value};
     writequeue_.emplace_back(data);
-    ESP_LOGD(TAG, "Data write pending: function (%i), value (%i), address (%i)", data.function_value, data.write_value, data.register_value);
+    //ESP_LOGD(TAG, "Data write pending: function (%i), value (%i), address (%i)", data.function_value, data.write_value, data.register_value);
 }
 
 //void Innova::writeModbusRegister(WriteableData write_data) { 
@@ -172,11 +172,7 @@ void Innova::control(const climate::ClimateCall &call) {
             default: 
                 ESP_LOGW(TAG, "Unsupported mode: %d", mode); 
             break;
-        }
-	    
-	    ESP_LOGD(TAG, "Mode set to: %d", this->mode);
-	    ESP_LOGD(TAG, "Mode set to: %d", mode);
-	    
+        }	    
     }
 
     if (call.get_fan_mode().has_value()) {
@@ -201,10 +197,6 @@ void Innova::control(const climate::ClimateCall &call) {
                 new_prg = (curr_prg & ~(0b111)) | 1;
             break;
         }
-	    
-	    ESP_LOGD(TAG, "Fan mode set to: %d", this->fan_mode);
-	    ESP_LOGD(TAG, "Fan mode set to: %d", fan_mode);
-	    
         add_to_queue(CMD_WRITE_REG, new_prg, INNOVA_PROGRAM);
     }
     
