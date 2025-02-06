@@ -174,8 +174,8 @@ void Innova::control(const climate::ClimateCall &call) {
             break;
         }
 	    
-	    ESP_LOGD(TAG, "Mode set to: %s", this->mode);
-	    ESP_LOGD(TAG, "Mode set to: %s", mode);
+	    ESP_LOGD(TAG, "Mode set to: %d", this->mode);
+	    ESP_LOGD(TAG, "Mode set to: %d", mode);
 	    
     }
 
@@ -202,8 +202,8 @@ void Innova::control(const climate::ClimateCall &call) {
             break;
         }
 	    
-	    ESP_LOGD(TAG, "Fan mode set to: %s", this->fan_mode);
-	    ESP_LOGD(TAG, "Fan mode set to: %s", fan_mode);
+	    ESP_LOGD(TAG, "Fan mode set to: %d", this->fan_mode);
+	    ESP_LOGD(TAG, "Fan mode set to: %d", fan_mode);
 	    
         add_to_queue(CMD_WRITE_REG, new_prg, INNOVA_PROGRAM);
     }
