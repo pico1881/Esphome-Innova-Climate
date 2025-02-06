@@ -26,7 +26,6 @@ class Innova : public esphome::climate::Climate, public PollingComponent, public
   void add_to_queue(uint8_t function, float new_value, uint16_t address);
 
   climate::ClimateTraits traits() override {
-    // Return the traits of this climate device.
     auto traits = climate::ClimateTraits();
     traits.set_supports_action(true);
     traits.set_supports_current_temperature(true);
@@ -51,12 +50,8 @@ class Innova : public esphome::climate::Climate, public PollingComponent, public
  protected:
   int state_{0};
   bool waiting_{false};
-  //bool write_data_{false};
   uint32_t last_send_{0};
   bool waiting_for_write_ack_{false};
-  float current_temp_{10.0};
-  float target_temp_{10.0};
- // float water_temp_;
   int fan_speed_;
   int program_;
   int season_;
