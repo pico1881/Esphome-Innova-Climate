@@ -58,9 +58,9 @@ class Innova : public esphome::climate::Climate, public PollingComponent, public
 
   void control(const climate::ClimateCall &call) override; 
 
-  void handle_mode(const climate::ClimateCall &call);
-  void handle_fan_mode(const climate::ClimateCall &call);
-  void handle_target_temperature(const climate::ClimateCall &call);
+ // void handle_mode(const climate::ClimateCall &call);
+ // void handle_fan_mode(const climate::ClimateCall &call);
+ // void handle_target_temperature(const climate::ClimateCall &call);
 };
 
 }  // namespace innova
