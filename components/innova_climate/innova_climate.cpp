@@ -126,8 +126,8 @@ void Innova::update() {
     //ESP_LOGD(TAG, "Data write pending: function (%i), value (%i), address (%i)", data.function_value, data.write_value, data.register_value);
 //}
 
-void Innova::add_to_queue(uint8_t function, float new_value, uint16_t address) {
-    WriteableData data{function, address, static_cast<uint16_t>(new_value)};
+void Innova::add_to_queue(uint8_t function, uint8_t new_value, uint16_t address) {
+    WriteableData data{function, address, new_value};
     writequeue_.emplace_back(data);
     ESP_LOGD(TAG, "Data write pending: function (%i), value (%i), address (%i)", data.function_value, data.write_value, data.register_value);
 }
@@ -202,7 +202,7 @@ void Innova::control(const climate::ClimateCall &call) {
     
     if (call.get_target_temperature().has_value()) {
         this->target_temperature = *call.get_target_temperature();
-        float target = *call.get_target_temperature() * 10.0;
+        int target = *call.get_target_temperature() * 10;
         add_to_queue(CMD_WRITE_REG,target, INNOVA_SETPOINT);
     }
     //this->publish_state();
