@@ -1,5 +1,3 @@
-// Example: innova.h
-
 #pragma once
 
 #include "esphome/components/modbus/modbus.h"
@@ -55,12 +53,6 @@ class Innova : public esphome::climate::Climate, public PollingComponent, public
   int fan_speed_;
   int program_;
   int season_;
-  enum ReadWriteMode {
-    read,
-    write,
-    idle
-  };
-  ReadWriteMode current_read_write_mode_ = { Innova::read };
   std::deque<WriteableData>writequeue_;
   void writeModbusRegister(WriteableData write_data);
 
