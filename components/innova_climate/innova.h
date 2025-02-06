@@ -51,12 +51,12 @@ class Innova : public esphome::climate::Climate, public PollingComponent, public
  protected:
   int state_{0};
   bool waiting_{false};
-  bool write_data_{false};
+  //bool write_data_{false};
   uint32_t last_send_{0};
   bool waiting_for_write_ack_{false};
   float current_temp_{10.0};
   float target_temp_{10.0};
-  float water_temp_;
+ // float water_temp_;
   int fan_speed_;
   int program_;
   int season_;
