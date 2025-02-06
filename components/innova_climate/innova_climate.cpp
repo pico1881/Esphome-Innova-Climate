@@ -1,4 +1,4 @@
-#include "innova.h"
+#include "innova_climate.h"
 #include "esphome/core/log.h"
 
 namespace esphome {
@@ -131,6 +131,7 @@ void Innova::update() {
 void Innova::add_to_queue(uint8_t function, float new_value, uint16_t address) {
     WriteableData data{function, address, static_cast<uint16_t>(new_value)};
     writequeue_.emplace_back(data);
+    ESP_LOGD(TAG, "Data write pending: function (%i), value (%i), address (%i)", data.function_value, data.write_value, data.register_value);
 }
 
 //void Innova::writeModbusRegister(WriteableData write_data) { 
