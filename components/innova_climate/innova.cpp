@@ -43,7 +43,7 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
         case 1:
             value /= 10.0;
             this->current_temperature = value;
-	ESP_LOGD(TAG, "temp=%d", value)
+	ESP_LOGD(TAG, "temp=%d", value);
         break;
         case 2:
             value /= 10.0;
