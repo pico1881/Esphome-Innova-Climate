@@ -32,7 +32,7 @@ uart:
 external_components:
   - source:
       type: git
-      url: https://github.com/pico1881/esphome
+      url: https://github.com/pico1881/Esphome-Innova-Climate
       ref: main
     components: [ innova_climate ]
     refresh: 5s
