@@ -1,0 +1,43 @@
+substitutions:
+  name: innova_test
+  friendly_name: Climate Test
+
+esphome:
+  name: ${name}
+  platform: ESP8266
+  board: esp01_1m
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+logger:
+  baud_rate: 0
+
+api:
+  encryption:
+    key: !secret esp_api_key
+
+ota:
+  password: !secret esp_ota
+  platform: esphome
+
+uart:
+  tx_pin: GPIO01
+  rx_pin: GPIO03
+  baud_rate: 9600
+  stop_bits: 1
+  id: uart_bus
+
+external_components:
+  - source:
+      type: git
+      url: https://github.com/pico1881/esphome
+      ref: main
+    components: [ innova_climate ]
+    refresh: 5s
+
+climate:
+  - platform: innova_climate
+    name: "Innova Climate"
+    address: 9
