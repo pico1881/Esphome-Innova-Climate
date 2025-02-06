@@ -38,16 +38,17 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
     auto get_16bit = [&](int i) -> uint16_t { return (uint16_t(data[i * 2]) << 8) | uint16_t(data[i * 2 + 1]); };
 
     int value = get_16bit(0);
+    float f_value = (float) get_16bit(0);	
 
     switch (this->state_) {
         case 1:
-            value /= 10.0;
-            this->current_temperature = value;
-	ESP_LOGD(TAG, "temp=%d", value);
+            f_value /= 10.0;
+            this->current_temperature = f_value;
+	ESP_LOGD(TAG, "temp=%d", f_value);
         break;
         case 2:
-            value /= 10.0;
-            this->target_temperature = value;    
+            f_value /= 10.0;
+            this->target_temperature = f_value;    
         break;
         case 3:
             this->fan_speed_ = value;   
