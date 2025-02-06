@@ -38,15 +38,13 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
     auto get_16bit = [&](int i) -> uint16_t { return (uint16_t(data[i * 2]) << 8) | uint16_t(data[i * 2 + 1]); };
 
     int value = get_16bit(0);
-    float f_value = (float) get_16bit(0)/10.0;	
+    float f_value = static_cast<float>(get_16bit(0)) / 10.0;	
 
     switch (this->state_) {
         case 1:
-           // f_value /= 10.0;
             this->current_temperature = f_value;
         break;
         case 2:
-           // f_value /= 10.0;
             this->target_temperature = f_value;   
         break;
         case 3:
@@ -79,7 +77,7 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
                 this->action = climate::CLIMATE_ACTION_HEATING;
             } else if (this->season_ == 5 && this->fan_speed_ > 0) {
                  this->action = climate::CLIMATE_ACTION_COOLING;
-            } else if ((this->program_ & (0x0080)) == 128) {
+            } else if (this->program_ & (0x0080)) {
                 this->action = climate::CLIMATE_ACTION_OFF;	
             } else {
                 this->action = climate::CLIMATE_ACTION_IDLE;  
@@ -203,7 +201,6 @@ void Innova::control(const climate::ClimateCall &call) {
     }
     
     if (call.get_target_temperature().has_value()) {
-        // User requested target temperature change
         this->target_temperature = *call.get_target_temperature();
         float target = *call.get_target_temperature() * 10.0;
         add_to_queue(CMD_WRITE_REG,target, INNOVA_SETPOINT);
