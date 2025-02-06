@@ -146,7 +146,7 @@ void Innova::writeModbusRegister(WriteableData write_data) {
     this->waiting_for_write_ack_ = true;
 }
 
-/*void Innova::control(const climate::ClimateCall &call) {
+void Innova::control(const climate::ClimateCall &call) {
     if (call.get_mode().has_value()) {
         int curr_prg = this->program_;
         int new_prg = curr_prg;
@@ -210,77 +210,7 @@ void Innova::writeModbusRegister(WriteableData write_data) {
     }
     //this->publish_state();
     this->state_ = 1;
-}*/
-void Innova::control(const climate::ClimateCall &call) {
-    if (call.get_mode().has_value()) {
-        handle_mode(call);
-    }
-
-    if (call.get_fan_mode().has_value()) {
-        handle_fan_mode(call);
-    }
-    
-    if (call.get_target_temperature().has_value()) {
-        handle_target_temperature(call);
-    }
-    this->state_ = 1;
 }
-
-void Innova::handle_mode(const climate::ClimateCall &call) {
-    int curr_prg = this->program_;
-    int new_prg = curr_prg;
-    this->mode = *call.get_mode();
-    switch (this->mode) {
-        case climate::CLIMATE_MODE_OFF:
-            new_prg = curr_prg | (1 << 7);
-            add_to_queue(CMD_WRITE_REG, new_prg, INNOVA_PROGRAM);
-        break;
-        case climate::CLIMATE_MODE_HEAT:
-            add_to_queue(CMD_WRITE_REG, 3, INNOVA_SEASON);
-            new_prg = curr_prg & ~(1 << 7);
-            add_to_queue(CMD_WRITE_REG, new_prg, INNOVA_PROGRAM);
-        break;
-        case climate::CLIMATE_MODE_COOL:
-            add_to_queue(CMD_WRITE_REG, 5, INNOVA_SEASON);
-            new_prg = curr_prg & ~(1 << 7);
-            add_to_queue(CMD_WRITE_REG, new_prg, INNOVA_PROGRAM);
-        break;
-        default:
-            ESP_LOGW(TAG, "Unsupported mode: %d", this->mode);
-        break;
-    }
-}
-
-void Innova::handle_fan_mode(const climate::ClimateCall &call) {
-    int curr_prg = this->program_;
-    int new_prg = curr_prg;
-    this->fan_mode = *call.get_fan_mode();
-    switch (this->fan_mode) {
-        case climate::CLIMATE_FAN_LOW:
-            new_prg = (curr_prg & ~0b111) | 2;
-        break;
-        case climate::CLIMATE_FAN_MEDIUM:
-            new_prg = (curr_prg & ~0b111) | 1;
-        break;
-        case climate::CLIMATE_FAN_HIGH:
-            new_prg = (curr_prg & ~0b111) | 3;
-        break;
-        case climate::CLIMATE_FAN_AUTO:
-            new_prg = (curr_prg & ~0b111);
-        break;
-        default:
-            new_prg = (curr_prg & ~0b111) | 1;
-        break;
-    }
-    add_to_queue(CMD_WRITE_REG, new_prg, INNOVA_PROGRAM);
-}
-
-void Innova::handle_target_temperature(const climate::ClimateCall &call) {
-    this->target_temperature = *call.get_target_temperature();
-    float target = *call.get_target_temperature() * 10.0f;
-    add_to_queue(CMD_WRITE_REG, target, INNOVA_SETPOINT);
-}
-
 
 void Innova::dump_config() { 
     LOG_CLIMATE("", "Innova Climate", this); 
