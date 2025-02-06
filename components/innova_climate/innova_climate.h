@@ -1,5 +1,3 @@
-// Example: innova.h
-
 #pragma once
 
 #include "esphome/components/modbus/modbus.h"
@@ -9,6 +7,7 @@
 
 namespace esphome {
 namespace innova {
+
 struct WriteableData
 {
   uint8_t function_value;
@@ -23,7 +22,7 @@ class Innova : public esphome::climate::Climate, public PollingComponent, public
   void dump_config() override;
   void update() override;
   void on_modbus_data(const std::vector<uint8_t> &data) override;
-  void add_to_queue(uint8_t function, float new_value, uint16_t address);
+  void add_to_queue(uint8_t function, uint8_t new_value, uint16_t address);
 
   climate::ClimateTraits traits() override {
     auto traits = climate::ClimateTraits();
@@ -55,12 +54,6 @@ class Innova : public esphome::climate::Climate, public PollingComponent, public
   int fan_speed_;
   int program_;
   int season_;
-  enum ReadWriteMode {
-    read,
-    write,
-    idle
-  };
-  ReadWriteMode current_read_write_mode_ = { Innova::read };
   std::deque<WriteableData>writequeue_;
   void writeModbusRegister(WriteableData write_data);
 

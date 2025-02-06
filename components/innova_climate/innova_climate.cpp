@@ -1,4 +1,4 @@
-#include "innova.h"
+#include "innova_climate.h"
 #include "esphome/core/log.h"
 
 namespace esphome {
@@ -38,15 +38,13 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
     auto get_16bit = [&](int i) -> uint16_t { return (uint16_t(data[i * 2]) << 8) | uint16_t(data[i * 2 + 1]); };
 
     int value = get_16bit(0);
-    float f_value = (float) get_16bit(0);	
+    float f_value = static_cast<float>(get_16bit(0)) / 10.0;	
 
     switch (this->state_) {
         case 1:
-            f_value /= 10.0;
             this->current_temperature = f_value;
         break;
         case 2:
-            f_value /= 10.0;
             this->target_temperature = f_value;   
         break;
         case 3:
@@ -63,13 +61,13 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
                 default: fmode = climate::CLIMATE_FAN_MEDIUM; break;
             }
             this->fan_mode = fmode;    
-           // ESP_LOGD(TAG, "Program=%d", this->program_);
+           //ESP_LOGD(TAG, "Program=%d", this->program_);
         break;
         case 5:
             this->season_ = value;   
-            if (this->season_ == 3 && !((this->program_ & (0x0080)) == 128)) {
+            if (this->season_ == 3 && !(this->program_ & 0x0080)) {
                 this->mode = climate::CLIMATE_MODE_HEAT;
-            } else if (this->season_ == 5 && !((this->program_ & (0x0080)) == 128)) {
+            } else if (this->season_ == 5 && !(this->program_ & 0x0080)) {
                 this->mode = climate::CLIMATE_MODE_COOL;
             } else {
                 this->mode = climate::CLIMATE_MODE_OFF;
@@ -79,7 +77,7 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
                 this->action = climate::CLIMATE_ACTION_HEATING;
             } else if (this->season_ == 5 && this->fan_speed_ > 0) {
                  this->action = climate::CLIMATE_ACTION_COOLING;
-            } else if ((this->program_ & (0x0080)) == 128) {
+            } else if (this->program_ & (0x0080)) {
                 this->action = climate::CLIMATE_ACTION_OFF;	
             } else {
                 this->action = climate::CLIMATE_ACTION_IDLE;  
@@ -119,19 +117,16 @@ void Innova::update() {
     this->state_ = 1;
 }
 
-void Innova::add_to_queue(uint8_t function, float new_value, uint16_t address) {
-    WriteableData data;
-    data.function_value = function;
-    data.write_value = new_value;
-    data.register_value = address;
+void Innova::add_to_queue(uint8_t function, uint8_t new_value, uint16_t address) {
+    WriteableData data{function, address, new_value};
     writequeue_.emplace_back(data);
     //ESP_LOGD(TAG, "Data write pending: function (%i), value (%i), address (%i)", data.function_value, data.write_value, data.register_value);
 }
 
 void Innova::writeModbusRegister(WriteableData write_data) { 
-    uint8_t payload[] = {(uint8_t)(write_data.write_value >> 8), (uint8_t)write_data.write_value };
-    send( write_data.function_value,write_data.register_value,1,sizeof(payload),payload);
-    this->waiting_for_write_ack_ = true ;
+    uint8_t payload[] = {static_cast<uint8_t>(write_data.write_value >> 8), static_cast<uint8_t>(write_data.write_value)};
+    send(write_data.function_value, write_data.register_value, 1, sizeof(payload), payload);
+    this->waiting_for_write_ack_ = true;
 }
 
 void Innova::control(const climate::ClimateCall &call) {
@@ -142,19 +137,16 @@ void Innova::control(const climate::ClimateCall &call) {
         climate::ClimateMode mode = *call.get_mode();
         switch (mode) {
             case climate::CLIMATE_MODE_OFF:
-                //ESP_LOGD(TAG, "Set Climate Mode: OFF");
                 new_prg = curr_prg | (1 << 7);
                 add_to_queue(CMD_WRITE_REG,new_prg, INNOVA_PROGRAM);
 		
             break;
             case climate::CLIMATE_MODE_HEAT:
-                //ESP_LOGD(TAG, "Set Climate Mode: HEAT");
                 add_to_queue(CMD_WRITE_REG,3, INNOVA_SEASON);
                 new_prg = curr_prg & ~(1 << 7);  
                 add_to_queue(CMD_WRITE_REG,new_prg, INNOVA_PROGRAM);
             break;
             case climate::CLIMATE_MODE_COOL:
-                //ESP_LOGD(TAG, "Set Climate Mode:COOL");
                 add_to_queue(CMD_WRITE_REG,5, INNOVA_SEASON);
                 new_prg = curr_prg & ~(1 << 7);
                 add_to_queue(CMD_WRITE_REG,new_prg, INNOVA_PROGRAM);
@@ -162,7 +154,7 @@ void Innova::control(const climate::ClimateCall &call) {
             default: 
                 ESP_LOGW(TAG, "Unsupported mode: %d", mode); 
             break;
-        }
+        }	    
     }
 
     if (call.get_fan_mode().has_value()) {
@@ -191,9 +183,8 @@ void Innova::control(const climate::ClimateCall &call) {
     }
     
     if (call.get_target_temperature().has_value()) {
-        // User requested target temperature change
         this->target_temperature = *call.get_target_temperature();
-        float target = *call.get_target_temperature() * 10.0;
+        int target = *call.get_target_temperature() * 10;
         add_to_queue(CMD_WRITE_REG,target, INNOVA_SETPOINT);
     }
     //this->publish_state();
