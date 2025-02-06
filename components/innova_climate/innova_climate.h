@@ -7,6 +7,7 @@
 
 namespace esphome {
 namespace innova {
+
 struct WriteableData
 {
   uint8_t function_value;
