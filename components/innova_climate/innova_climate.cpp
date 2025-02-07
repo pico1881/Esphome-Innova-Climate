@@ -8,11 +8,13 @@ static const char *const TAG = "innova";
 static const uint8_t CMD_READ_REG = 0x03;
 static const uint8_t CMD_WRITE_REG = 0x06;
 static const uint16_t INNOVA_AIR_TEMPERATURE = 0x00;    // reg 0
+static const uint16_t INNOVA_WATER_TEMPERATURE = 0x01;  // reg 1
 static const uint16_t INNOVA_FAN_SPEED = 0x0F;          // reg 15
 static const uint16_t INNOVA_PROGRAM = 0xC9;            // reg 201
 static const uint16_t INNOVA_SEASON = 0xE9;             // reg 233
 static const uint16_t INNOVA_SETPOINT = 0xE7;           // reg 231
-static const uint16_t REGISTER[] = {INNOVA_AIR_TEMPERATURE, INNOVA_SETPOINT, INNOVA_FAN_SPEED, INNOVA_PROGRAM, INNOVA_SEASON};
+static const uint16_t INNOVA_OUT = 0x09;           	// reg 9
+static const uint16_t REGISTER[] = {INNOVA_AIR_TEMPERATURE, INNOVA_SETPOINT, INNOVA_FAN_SPEED, INNOVA_PROGRAM, INNOVA_SEASON, INNOVA_WATER_TEMPERATURE, INNOVA_OUT};
 
 void Innova::setup() {}
 
@@ -43,12 +45,18 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
     switch (this->state_) {
         case 1:
             this->current_temperature = f_value;
+			if (this->air_temperature_sensor_ != nullptr)
+               this->air_temperature_sensor_->publish_state(f_value);
         break;
         case 2:
             this->target_temperature = f_value;   
+            if (this->setpoint_sensor_ != nullptr)
+                this->setpoint_sensor_->publish_state(f_value);
         break;
         case 3:
             this->fan_speed_ = value;   
+            if (this->fan_speed_sensor_ != nullptr)
+                this->fan_speed_sensor_->publish_state(value);
         break;
         case 4:
             this->program_ = value;   
@@ -83,8 +91,20 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
                 this->action = climate::CLIMATE_ACTION_IDLE;  
             }
         break;
+        case 6:
+            if (this->water_temperature_sensor_ != nullptr)
+                this->water_temperature_sensor_->publish_state(f_value);
+        break;
+        case 7:
+            if (this->boiler_relay_sensor_ != nullptr) {
+                this->boiler_relay_sensor_->publish_state((this->value & 0x0008) != 0); 
+            }
+            if (this->chiller_relay_sensor_ != nullptr) {
+                this->chiller_relay_sensor_->publish_state((this->value & 0x0004) != 0); 
+            }
+        break;
     }
-    if (++this->state_ > 5){
+    if (++this->state_ > 7){
         this->state_ = 0;
     	this->publish_state();
     }
