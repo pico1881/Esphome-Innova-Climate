@@ -76,9 +76,9 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
         break;
         case 5:
             this->season_ = value;   
-            if (this->season_ == 3 && !(this->program_ & 0x0080)) {
+            if (this->season_ == 3 && !(this->program_ & (0x0080))) {
                 this->mode = climate::CLIMATE_MODE_HEAT;
-            } else if (this->season_ == 5 && !(this->program_ & 0x0080)) {
+            } else if (this->season_ == 5 && !(this->program_ & (0x0080))) {
                 this->mode = climate::CLIMATE_MODE_COOL;
             } else {
                 this->mode = climate::CLIMATE_MODE_OFF;
@@ -100,10 +100,10 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
         break;
         case 7:
             if (this->boiler_relay_sensor_ != nullptr) {
-                this->boiler_relay_sensor_->publish_state((value & 0x0008) != 0); 
+                this->boiler_relay_sensor_->publish_state((value & (0x0008)) != 0); 
             }
             if (this->chiller_relay_sensor_ != nullptr) {
-                this->chiller_relay_sensor_->publish_state((value & 0x0004) != 0); 
+                this->chiller_relay_sensor_->publish_state((value & (0x0004)) != 0); 
             }
         break;
     }
