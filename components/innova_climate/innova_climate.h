@@ -57,8 +57,6 @@ class Innova : public esphome::climate::Climate, public PollingComponent, public
     });
     return traits;
   }
-private:
-switch_::Switch *lockSwitch;
 
  protected:
   int state_{0};
@@ -79,7 +77,7 @@ switch_::Switch *lockSwitch;
   sensor::Sensor *setpoint_sensor_{nullptr};
   binary_sensor::BinarySensor *boiler_relay_sensor_{nullptr};
   binary_sensor::BinarySensor *chiller_relay_sensor_{nullptr};
-
+  switch_::Switch *lockSwitch{nullptr};
 };
 
 }  // namespace innova
