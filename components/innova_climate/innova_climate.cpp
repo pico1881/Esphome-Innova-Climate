@@ -222,14 +222,14 @@ void Innova::set_key_lock(bool state) {
 
 void Innova::dump_config() { 
     LOG_CLIMATE("", "Innova Climate", this); 
-    ESP_LOGCONFIG(TAG, "INNOVA:");
+    // ESP_LOGCONFIG(TAG, "INNOVA:");
     ESP_LOGCONFIG(TAG, "  Address: 0x%02X", this->address_);
-    LOG_SENSOR("", "Air Temperature", this->air_temperature_sensor_);
-    LOG_SENSOR("", "Water Temperature", this->water_temperature_sensor_);
-    LOG_SENSOR("", "FAN speed", this->fan_speed_sensor_);
-    LOG_SENSOR("", "Setpoint", this->setpoint_sensor_);  
-    LOG_BINARY_SENSOR("", "Boiler relay", this->boiler_relay_sensor_);  
-    LOG_BINARY_SENSOR("", "Chiller relay", this->chiller_relay_sensor_); 
+    // LOG_SENSOR("", "Air Temperature", this->air_temperature_sensor_);
+    // LOG_SENSOR("", "Water Temperature", this->water_temperature_sensor_);
+    // LOG_SENSOR("", "FAN speed", this->fan_speed_sensor_);
+    // LOG_SENSOR("", "Setpoint", this->setpoint_sensor_);  
+    // LOG_BINARY_SENSOR("", "Boiler relay", this->boiler_relay_sensor_);  
+    // LOG_BINARY_SENSOR("", "Chiller relay", this->chiller_relay_sensor_); 
 }
 
 }  // namespace innova
