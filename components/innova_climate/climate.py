@@ -108,5 +108,5 @@ async def to_code(config):
     if CONF_KEY_LOCK_SWITCH in config: 
         conf = config[CONF_KEY_LOCK_SWITCH]
         swt = await switch.new_switch(conf)
-        cg.add(var.setLockSwitch(swt))
+        cg.add(var.set_key_lock_switch(swt))
         await cg.register_parented(swt, var)
