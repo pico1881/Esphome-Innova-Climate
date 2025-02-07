@@ -7,6 +7,8 @@ from esphome.const import (
     CONF_TEMPERATURE,
     DEVICE_CLASS_TEMPERATURE,
     DEVICE_CLASS_SPEED,
+    DEVICE_CLASS_EMPTY,
+    ENTITY_CATEGORY_NONE,
     STATE_CLASS_MEASUREMENT,
     UNIT_REVOLUTIONS_PER_MINUTE,
     UNIT_CELSIUS,
@@ -24,6 +26,8 @@ CONF_WATER_TEMPERATURE = "water_temperature"
 CONF_AIR_TEMPERATURE = "air_temperature"
 CONF_FAN_SPEED = "fan_speed"
 CONF_SETPOINT = "setpoint"
+CONF_BOILER_RELAY = "boiler_relay"
+CONF_CHILLER_RELAY = "chiller_relay"
 
 CONFIG_SCHEMA = (
     climate.CLIMATE_SCHEMA.extend(
@@ -53,7 +57,15 @@ CONFIG_SCHEMA = (
                 accuracy_decimals=1,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
-            )
+            ),
+            cv.Optional(CONF_BOILER_RELAY): binary_sensor.binary_sensor_schema(
+                device_class=DEVICE_CLASS_EMPTY,
+                entity_category=ENTITY_CATEGORY_NONE,
+            ),
+            cv.Optional(CONF_CHILLER_RELAY): binary_sensor.binary_sensor_schema(
+                device_class=DEVICE_CLASS_EMPTY,
+                entity_category=ENTITY_CATEGORY_NONE,
+            ),
         }
     )
     .extend(cv.polling_component_schema("60s"))
@@ -82,3 +94,11 @@ async def to_code(config):
         conf = config[CONF_SETPOINT]
         sens = await sensor.new_sensor(conf)
         cg.add(var.set_setpoint_sensor(sens))
+    if CONF_BOILER_RELAY in config:
+        conf = config[CONF_BOILER_RELAY]
+        sens = await binary_sensor.new_binary_sensor(conf)
+        cg.add(var.set_boiler_relay_sensor(sens))
+    if CONF_CHILLER_RELAY in config:
+        conf = config[CONF_CHILLER_RELAY]        
+        sens = await binary_sensor.new_binary_sensor(conf)
+        cg.add(var.set_chiller_relay_sensor(sens))
