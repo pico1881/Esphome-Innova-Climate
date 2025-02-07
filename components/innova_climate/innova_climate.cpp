@@ -69,7 +69,7 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
                 default: fmode = climate::CLIMATE_FAN_MEDIUM; break;
             }
             this->fan_mode = fmode;    
-           //ESP_LOGD(TAG, "Program=%d", this->program_);
+           ESP_LOGD(TAG, "Program=%d", this->program_);
         break;
         case 5:
             this->season_ = value;   
@@ -209,6 +209,12 @@ void Innova::control(const climate::ClimateCall &call) {
     }
     //this->publish_state();
     this->state_ = 1;
+}
+
+void Innova::setLock(bool state) {
+    int new_prg = state ? (this->program_ | (1 << 4)) : (this->program_ & ~(1 << 4));
+    add_to_queue(CMD_WRITE_REG, new_prg, INNOVA_PROGRAM);
+    this->state_ = 1; // force modbus update
 }
 
 void Innova::dump_config() { 
