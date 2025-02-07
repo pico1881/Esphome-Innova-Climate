@@ -20,6 +20,8 @@ innova_ns = cg.esphome_ns.namespace("innova")
 
 Innova = innova_ns.class_("Innova", climate.Climate, cg.PollingComponent, modbus.ModbusDevice)
 
+KeyLockSwitch = innova_ns.class_("KeyLockSwitch", switch.Switch)
+
 CONF_INNOVA_ID = 'innova_id'
 CONF_WATER_TEMPERATURE = "water_temperature"
 CONF_AIR_TEMPERATURE = "air_temperature"
@@ -27,6 +29,12 @@ CONF_FAN_SPEED = "fan_speed"
 CONF_SETPOINT = "setpoint"
 CONF_BOILER_RELAY = "boiler_relay"
 CONF_CHILLER_RELAY = "chiller_relay"
+CONF_KEY_LOCK_SWITCH = "key_lock_switch"
+
+KEY_LOCK_SCHEMA = switch.SWITCH_SCHEMA.extend(
+    {cv.GenerateID(CONF_ID): cv.declare_id(KeyLockSwitch)}
+)
+
 
 CONFIG_SCHEMA = (
     climate.CLIMATE_SCHEMA.extend(
@@ -63,6 +71,7 @@ CONFIG_SCHEMA = (
             cv.Optional(CONF_CHILLER_RELAY): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_EMPTY,
             ),
+            cv.Optional(CONF_KEY_LOCK_SWITCH): KEY_LOCK_SCHEMA
         }
     )
     .extend(cv.polling_component_schema("60s"))
@@ -99,3 +108,8 @@ async def to_code(config):
         conf = config[CONF_CHILLER_RELAY]        
         sens = await binary_sensor.new_binary_sensor(conf)
         cg.add(var.set_chiller_relay_sensor(sens))
+    if CONF_KEY_LOCK_SWITCH in config: 
+        conf = config[CONF_KEY_LOCK_SWITCH]
+        swt = await switch.new_switch(conf)
+        cg.add(var.set_key_lock_switch(swt))
+        await cg.register_parented(swt, var)
