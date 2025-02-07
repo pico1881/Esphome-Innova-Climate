@@ -1,16 +1,18 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import climate, sensor, modbus
+from esphome.components import climate, modbus
 
 from esphome.const import (
     CONF_ID, 
 )
 
-AUTO_LOAD = ["modbus"]
+AUTO_LOAD = ['modbus']
 
 innova_ns = cg.esphome_ns.namespace("innova")
 
 Innova = innova_ns.class_("Innova", climate.Climate, cg.PollingComponent, modbus.ModbusDevice)
+
+CONF_INNOVA_ID = 'innova_id'
 
 CONFIG_SCHEMA = (
     climate.CLIMATE_SCHEMA.extend(
