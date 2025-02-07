@@ -1,6 +1,6 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import climate, modbus, sensor
+from esphome.components import climate, modbus, sensor, binary_sensor
 
 from esphome.const import (
     CONF_ID,
@@ -13,7 +13,7 @@ from esphome.const import (
     ICON_FAN,
 )
 
-AUTO_LOAD = ['modbus', 'sensor']
+AUTO_LOAD = ['modbus', 'sensor', 'binary_sensor']
 
 innova_ns = cg.esphome_ns.namespace("innova")
 
