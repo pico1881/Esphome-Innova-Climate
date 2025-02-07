@@ -126,7 +126,7 @@ void Innova::loop() {
 
     if (this->writequeue_.size() > 0) {
         //ESP_LOGD(TAG, "Write mode: Write queue size is now: %d",this->writequeue_.size());
-        writeModbusRegister(this->writequeue_.front());
+        write_modbus_register(this->writequeue_.front());
         this->writequeue_.pop_front();
     } else {
         send(CMD_READ_REG, REGISTER[this->state_ - 1], 1);        
@@ -146,7 +146,7 @@ void Innova::add_to_queue(uint8_t function, uint8_t new_value, uint16_t address)
     //ESP_LOGD(TAG, "Data write pending: function (%i), value (%i), address (%i)", data.function_value, data.write_value, data.register_value);
 }
 
-void Innova::writeModbusRegister(WriteableData write_data) { 
+void Innova::write_modbus_register(WriteableData write_data) { 
     uint8_t payload[] = {static_cast<uint8_t>(write_data.write_value >> 8), static_cast<uint8_t>(write_data.write_value)};
     send(write_data.function_value, write_data.register_value, 1, sizeof(payload), payload);
     this->waiting_for_write_ack_ = true;
@@ -214,7 +214,7 @@ void Innova::control(const climate::ClimateCall &call) {
     this->state_ = 1;
 }
 
-void Innova::setLock(bool state) {
+void Innova::set_key_lock(bool state) {
     int new_prg = state ? (this->program_ | (1 << 4)) : (this->program_ & ~(1 << 4));
     add_to_queue(CMD_WRITE_REG, new_prg, INNOVA_PROGRAM);
     this->state_ = 1; // force modbus update
