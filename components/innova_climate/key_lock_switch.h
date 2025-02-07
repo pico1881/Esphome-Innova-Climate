@@ -7,10 +7,6 @@ namespace esphome {
 namespace innova {
 
 class InnovaSwitch : public switch_::Switch, public Parented<Innova> {
-public:
-void dump_config(){
-    LOG_SWITCH("", "Innova Switch", this);
-};
 
 protected:
   void write_state(bool state) override {
