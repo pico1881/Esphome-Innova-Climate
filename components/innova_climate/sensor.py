@@ -1,7 +1,7 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import sensor
-from .. import Innova, CONF_INNOVA_ID
+import Innova, CONF_INNOVA_ID
 from esphome.const import (
     CONF_TEMPERATURE,
     CONF_ID,
@@ -21,10 +21,8 @@ DEPENDENCIES = ['innova']
 CONF_WATER_TEMPERATURE = "water_temperature"
 CONF_AIR_TEMPERATURE = "air_temperature"
 CONF_FAN_SPEED = "fan_speed"
-CONF_PROGRAM = "program"
-CONF_SEASON = "season"
 CONF_SETPOINT = "setpoint"
-CONF_OUTPUT_REG = "output_reg"
+
 
 CONFIG_SCHEMA = {
             cv.GenerateID(CONF_INNOVA_ID): cv.use_id(Innova),
@@ -46,24 +44,6 @@ CONFIG_SCHEMA = {
                 device_class=DEVICE_CLASS_SPEED,
                 state_class=STATE_CLASS_MEASUREMENT,
                 icon=ICON_FAN,
-            ),
-            cv.Optional(CONF_PROGRAM): sensor.sensor_schema(
-                unit_of_measurement=UNIT_EMPTY,
-                accuracy_decimals=0,
-                device_class=DEVICE_CLASS_EMPTY,
-                state_class=STATE_CLASS_MEASUREMENT,
-            ),
-            cv.Optional(CONF_OUTPUT_REG): sensor.sensor_schema(
-                unit_of_measurement=UNIT_EMPTY,
-                accuracy_decimals=0,
-                device_class=DEVICE_CLASS_EMPTY,
-                state_class=STATE_CLASS_MEASUREMENT,
-            ),
-            cv.Optional(CONF_SEASON): sensor.sensor_schema(
-                unit_of_measurement=UNIT_EMPTY,
-                accuracy_decimals=0,
-                device_class=DEVICE_CLASS_EMPTY,
-                state_class=STATE_CLASS_MEASUREMENT,
             ),
             cv.Optional(CONF_SETPOINT): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
@@ -90,18 +70,6 @@ async def to_code(config):
         conf = config[CONF_FAN_SPEED]
         sens = await sensor.new_sensor(conf)
         cg.add(var.set_fan_speed_sensor(sens))
-    if CONF_PROGRAM in config:
-        conf = config[CONF_PROGRAM]
-        sens = await sensor.new_sensor(conf)
-        cg.add(var.set_program_sensor(sens))
-    if CONF_OUTPUT_REG in config:
-        conf = config[CONF_OUTPUT_REG]
-        sens = await sensor.new_sensor(conf)
-        cg.add(var.set_out_reg_sensor(sens))
-    if CONF_SEASON in config:
-        conf = config[CONF_SEASON]
-        sens = await sensor.new_sensor(conf)
-        cg.add(var.set_season_sensor(sens))
     if CONF_SETPOINT in config:
         conf = config[CONF_SETPOINT]
         sens = await sensor.new_sensor(conf)
