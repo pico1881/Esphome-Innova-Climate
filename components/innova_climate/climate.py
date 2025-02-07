@@ -13,6 +13,7 @@ from esphome.const import (
     ICON_FAN,
 )
 
+CODEOWNERS = ["@pico1881"]
 AUTO_LOAD = ['modbus', 'sensor', 'binary_sensor', "switch"]
 
 innova_ns = cg.esphome_ns.namespace("innova")
