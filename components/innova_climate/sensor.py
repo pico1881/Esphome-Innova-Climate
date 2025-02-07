@@ -16,7 +16,7 @@ from esphome.const import (
 
 )
 
-DEPENDENCIES = ['innova']
+DEPENDENCIES = ['innova_climate']
 
 CONF_WATER_TEMPERATURE = "water_temperature"
 CONF_AIR_TEMPERATURE = "air_temperature"
