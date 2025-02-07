@@ -6,12 +6,12 @@
 namespace esphome {
 namespace innova {
 
-class KeyLockSwitch : public switch_::Switch, public Parented<Innova> {
+class LockSwitch : public switch_::Switch, public Parented<Innova> {
 
 protected:
   void write_state(bool state) override
          {
-            //parent_->setIon(state);
+            //parent_->setLock(state);
          };
 };
 
