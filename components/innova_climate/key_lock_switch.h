@@ -11,7 +11,7 @@ class LockSwitch : public switch_::Switch, public Parented<Innova> {
 protected:
   void write_state(bool state) override
          {
-            parent_->setLock(state);
+            parent_->set_key_lock(state);
          };
 };
 
