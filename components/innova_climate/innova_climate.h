@@ -34,7 +34,7 @@ class Innova : public esphome::climate::Climate, public PollingComponent, public
   void update() override;
   void on_modbus_data(const std::vector<uint8_t> &data) override;
   void add_to_queue(uint8_t function, uint8_t new_value, uint16_t address);
-  void setLock(bool state);
+  void set_key_lock(bool state);
 
   climate::ClimateTraits traits() override {
     auto traits = climate::ClimateTraits();
