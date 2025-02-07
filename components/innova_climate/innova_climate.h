@@ -27,13 +27,13 @@ class Innova : public esphome::climate::Climate, public PollingComponent, public
   void set_boiler_relay_sensor(binary_sensor::BinarySensor *boiler_relay_sensor) { boiler_relay_sensor_ = boiler_relay_sensor; }
   void set_chiller_relay_sensor(binary_sensor::BinarySensor *chiller_relay_sensor) { chiller_relay_sensor_ = chiller_relay_sensor; }
   void setLockSwitch(switch_::Switch *lockSwitch) { lockSwitch = lockSwitch; }
+
   void setup() override;
   void loop() override;
   void dump_config() override;
   void update() override;
   void on_modbus_data(const std::vector<uint8_t> &data) override;
   void add_to_queue(uint8_t function, uint8_t new_value, uint16_t address);
-  
   void setLock(bool state);
 
   climate::ClimateTraits traits() override {
@@ -69,7 +69,7 @@ switch_::Switch *lockSwitch;
   int program_;
   int season_;
   std::deque<WriteableData>writequeue_;
-  void writeModbusRegister(WriteableData write_data);
+  void write_modbus_register(WriteableData write_data);
 
   void control(const climate::ClimateCall &call) override; 
 
