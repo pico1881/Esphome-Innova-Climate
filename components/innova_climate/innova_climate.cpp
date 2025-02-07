@@ -55,8 +55,11 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
         break;
         case 3:
             this->fan_speed_ = value;   
-            if (this->fan_speed_sensor_ != nullptr)
-                this->fan_speed_sensor_->publish_state(value);
+            if (this->fan_speed_sensor_ != nullptr) {
+		if (value != this->current_temperature) {
+           	 this->fan_speed_sensor_->publish_state(value);
+        	}}
+		    
         break;
         case 4:
             this->program_ = value;   
