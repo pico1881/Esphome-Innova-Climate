@@ -1,7 +1,7 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import sensor
-import Innova, CONF_INNOVA_ID
+import Innova, CONF_INNOVA_ID, innova_ns
 from esphome.const import (
     CONF_TEMPERATURE,
     CONF_ID,
@@ -16,7 +16,7 @@ from esphome.const import (
 
 )
 
-DEPENDENCIES = ['innova_climate']
+DEPENDENCIES = ['innova']
 
 CONF_WATER_TEMPERATURE = "water_temperature"
 CONF_AIR_TEMPERATURE = "air_temperature"
