@@ -69,8 +69,8 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
                 default: fmode = climate::CLIMATE_FAN_MEDIUM; break;
             }
             this->fan_mode = fmode;    
-	    if (this->lockSwitch != nullptr)
-       	       this->lockSwitch->publish_state((this->program_ & (0x0010)) == 16);
+	    if (this->key_lock_switch_ != nullptr)
+       	       this->key_lock_switch_->publish_state(this->program_ & (0x0010));
   
            ESP_LOGD(TAG, "Program=%d", this->program_);
         break;
