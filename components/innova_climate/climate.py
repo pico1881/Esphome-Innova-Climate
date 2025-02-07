@@ -8,6 +8,7 @@ from esphome.const import (
     DEVICE_CLASS_TEMPERATURE,
     DEVICE_CLASS_SPEED,
     DEVICE_CLASS_EMPTY,
+    DEVICE_CLASS_RUNNING,
     ENTITY_CATEGORY_NONE,
     STATE_CLASS_MEASUREMENT,
     UNIT_REVOLUTIONS_PER_MINUTE,
@@ -59,12 +60,10 @@ CONFIG_SCHEMA = (
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
             cv.Optional(CONF_BOILER_RELAY): binary_sensor.binary_sensor_schema(
-                device_class=DEVICE_CLASS_EMPTY,
-                entity_category=ENTITY_CATEGORY_NONE,
+                device_class=DEVICE_CLASS_RUNNING,
             ),
             cv.Optional(CONF_CHILLER_RELAY): binary_sensor.binary_sensor_schema(
-                device_class=DEVICE_CLASS_EMPTY,
-                entity_category=ENTITY_CATEGORY_NONE,
+                device_class=DEVICE_CLASS_RUNNING,
             ),
         }
     )
