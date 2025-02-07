@@ -19,7 +19,7 @@ AUTO_LOAD = ['modbus', 'sensor', 'binary_sensor', "switch"]
 innova_ns = cg.esphome_ns.namespace("innova")
 Innova = innova_ns.class_("Innova", climate.Climate, cg.PollingComponent, modbus.ModbusDevice)
 
-KeyLockSwitch = innova_ns.class_("KeyLockSwitch", switch.Switch)
+LockSwitch = innova_ns.class_("LockSwitch", switch.Switch)
 
 CONF_INNOVA_ID = 'innova_id'
 CONF_WATER_TEMPERATURE = "water_temperature"
@@ -31,7 +31,7 @@ CONF_CHILLER_RELAY = "chiller_relay"
 CONF_KEY_LOCK_SWITCH = "key_lock_switch"
 
 KEY_LOCK_SCHEMA = switch.SWITCH_SCHEMA.extend(
-    {cv.GenerateID(CONF_ID): cv.declare_id(KeyLockSwitch)}
+    {cv.GenerateID(CONF_ID): cv.declare_id(LockSwitch)}
 )
 
 
@@ -110,5 +110,5 @@ async def to_code(config):
     if CONF_KEY_LOCK_SWITCH in config: 
         conf = config[CONF_KEY_LOCK_SWITCH]
         swt = await switch.new_switch(conf)
-        cg.add(var.set_key_lock_switch(swt))
+        cg.add(var.setLockSwitch(swt))
         await cg.register_parented(swt, var)
