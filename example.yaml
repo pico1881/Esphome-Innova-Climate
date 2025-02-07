@@ -1,6 +1,6 @@
 substitutions:
-  name: innova_test
-  friendly_name: Climate Test
+  name: innova
+  modbus_address: "0x0001"
 
 esphome:
   name: ${name}
@@ -33,14 +33,13 @@ external_components:
   - source:
       type: git
       url: https://github.com/pico1881/Esphome-Innova-Climate
-      ref: dev
+      ref: main
     components: [ innova_climate ]
-    refresh: 5s
 
 climate:
   - platform: innova_climate
-    name: "Innova Climate"
-    address: 9  #set device modbus address
+    name: ${name}
+    address: ${modbus_address}
     update_interval: 30s
     
     #optional Air temperature sensor
