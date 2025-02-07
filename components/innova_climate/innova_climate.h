@@ -63,9 +63,9 @@ class Innova : public esphome::climate::Climate, public PollingComponent, public
   bool waiting_{false};
   uint32_t last_send_{0};
   bool waiting_for_write_ack_{false};
-  int fan_speed_;
-  int program_;
-  int season_;
+  int fan_speed_{0};
+  int program_{0};
+  int season_{0};
   std::deque<WriteableData>writequeue_;
   void write_modbus_register(WriteableData write_data);
 
