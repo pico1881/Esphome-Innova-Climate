@@ -1,4 +1,5 @@
 #include "innova_climate.h"
+#include "innova_const.h"
 #include "esphome/core/log.h"
 
 namespace esphome {
