@@ -97,10 +97,10 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
         break;
         case 7:
             if (this->boiler_relay_sensor_ != nullptr) {
-                this->boiler_relay_sensor_->publish_state((this->value & 0x0008) != 0); 
+                this->boiler_relay_sensor_->publish_state((value & 0x0008) != 0); 
             }
             if (this->chiller_relay_sensor_ != nullptr) {
-                this->chiller_relay_sensor_->publish_state((this->value & 0x0004) != 0); 
+                this->chiller_relay_sensor_->publish_state((value & 0x0004) != 0); 
             }
         break;
     }
