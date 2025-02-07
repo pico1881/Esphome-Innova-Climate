@@ -55,11 +55,8 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
         break;
         case 3:
             this->fan_speed_ = value;   
-            if (this->fan_speed_sensor_ != nullptr) {
-		if (value != this->current_temperature) {
-           	 this->fan_speed_sensor_->publish_state(value);
-        	}}
-		    
+            if (this->fan_speed_sensor_ != nullptr) 
+           	this->fan_speed_sensor_->publish_state(value); 
         break;
         case 4:
             this->program_ = value;   
@@ -75,7 +72,7 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
 	    if (this->key_lock_switch_ != nullptr)
        	       this->key_lock_switch_->publish_state(this->program_ & (0x0010));
   
-           ESP_LOGD(TAG, "Program=%d", this->program_);
+           //ESP_LOGD(TAG, "Program=%d", this->program_);
         break;
         case 5:
             this->season_ = value;   
