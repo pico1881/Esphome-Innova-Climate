@@ -3,7 +3,14 @@ import esphome.config_validation as cv
 from esphome.components import climate, modbus, sensor
 
 from esphome.const import (
-    CONF_ID, 
+    CONF_ID,
+    CONF_TEMPERATURE,
+    DEVICE_CLASS_TEMPERATURE,
+    DEVICE_CLASS_SPEED,
+    STATE_CLASS_MEASUREMENT,
+    UNIT_REVOLUTIONS_PER_MINUTE,
+    UNIT_CELSIUS,
+    ICON_FAN,
 )
 
 AUTO_LOAD = ['modbus', 'sensor']
@@ -13,6 +20,10 @@ innova_ns = cg.esphome_ns.namespace("innova")
 Innova = innova_ns.class_("Innova", climate.Climate, cg.PollingComponent, modbus.ModbusDevice)
 
 CONF_INNOVA_ID = 'innova_id'
+CONF_WATER_TEMPERATURE = "water_temperature"
+CONF_AIR_TEMPERATURE = "air_temperature"
+CONF_FAN_SPEED = "fan_speed"
+CONF_SETPOINT = "setpoint"
 
 CONFIG_SCHEMA = (
     climate.CLIMATE_SCHEMA.extend(
