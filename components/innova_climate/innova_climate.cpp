@@ -1,18 +1,12 @@
 #include "innova_climate.h"
+#include "innova_const.h"
 #include "esphome/core/log.h"
 
 namespace esphome {
 namespace innova {
 
 static const char *const TAG = "innova";
-static const uint8_t CMD_READ_REG = 0x03;
-static const uint8_t CMD_WRITE_REG = 0x06;
-static const uint16_t INNOVA_AIR_TEMPERATURE = 0x00;    // reg 0
-static const uint16_t INNOVA_FAN_SPEED = 0x0F;          // reg 15
-static const uint16_t INNOVA_PROGRAM = 0xC9;            // reg 201
-static const uint16_t INNOVA_SEASON = 0xE9;             // reg 233
-static const uint16_t INNOVA_SETPOINT = 0xE7;           // reg 231
-static const uint16_t REGISTER[] = {INNOVA_AIR_TEMPERATURE, INNOVA_SETPOINT, INNOVA_FAN_SPEED, INNOVA_PROGRAM, INNOVA_SEASON};
+static const uint16_t REGISTER[] = {INNOVA_AIR_TEMPERATURE, INNOVA_SETPOINT, INNOVA_FAN_SPEED, INNOVA_PROGRAM, INNOVA_SEASON, INNOVA_WATER_TEMPERATURE, INNOVA_OUT};
 
 void Innova::setup() {}
 
@@ -43,12 +37,18 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
     switch (this->state_) {
         case 1:
             this->current_temperature = f_value;
+			if (this->air_temperature_sensor_ != nullptr)
+               this->air_temperature_sensor_->publish_state(f_value);
         break;
         case 2:
             this->target_temperature = f_value;   
+            if (this->setpoint_sensor_ != nullptr)
+                this->setpoint_sensor_->publish_state(f_value);
         break;
         case 3:
             this->fan_speed_ = value;   
+            if (this->fan_speed_sensor_ != nullptr) 
+           	this->fan_speed_sensor_->publish_state(value); 
         break;
         case 4:
             this->program_ = value;   
@@ -61,13 +61,16 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
                 default: fmode = climate::CLIMATE_FAN_MEDIUM; break;
             }
             this->fan_mode = fmode;    
+	    if (this->key_lock_switch_ != nullptr)
+       	       this->key_lock_switch_->publish_state(this->program_ & (0x0010));
+  
            //ESP_LOGD(TAG, "Program=%d", this->program_);
         break;
         case 5:
             this->season_ = value;   
-            if (this->season_ == 3 && !(this->program_ & 0x0080)) {
+            if (this->season_ == 3 && !(this->program_ & (0x0080))) {
                 this->mode = climate::CLIMATE_MODE_HEAT;
-            } else if (this->season_ == 5 && !(this->program_ & 0x0080)) {
+            } else if (this->season_ == 5 && !(this->program_ & (0x0080))) {
                 this->mode = climate::CLIMATE_MODE_COOL;
             } else {
                 this->mode = climate::CLIMATE_MODE_OFF;
@@ -83,8 +86,20 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
                 this->action = climate::CLIMATE_ACTION_IDLE;  
             }
         break;
+        case 6:
+            if (this->water_temperature_sensor_ != nullptr)
+                this->water_temperature_sensor_->publish_state(f_value);
+        break;
+        case 7:
+            if (this->boiler_relay_sensor_ != nullptr) {
+                this->boiler_relay_sensor_->publish_state((value & (0x0008)) != 0); 
+            }
+            if (this->chiller_relay_sensor_ != nullptr) {
+                this->chiller_relay_sensor_->publish_state((value & (0x0004)) != 0); 
+            }
+        break;
     }
-    if (++this->state_ > 5){
+    if (++this->state_ > 7){
         this->state_ = 0;
     	this->publish_state();
     }
@@ -103,7 +118,7 @@ void Innova::loop() {
 
     if (this->writequeue_.size() > 0) {
         //ESP_LOGD(TAG, "Write mode: Write queue size is now: %d",this->writequeue_.size());
-        writeModbusRegister(this->writequeue_.front());
+        write_modbus_register(this->writequeue_.front());
         this->writequeue_.pop_front();
     } else {
         send(CMD_READ_REG, REGISTER[this->state_ - 1], 1);        
@@ -123,7 +138,7 @@ void Innova::add_to_queue(uint8_t function, uint8_t new_value, uint16_t address)
     //ESP_LOGD(TAG, "Data write pending: function (%i), value (%i), address (%i)", data.function_value, data.write_value, data.register_value);
 }
 
-void Innova::writeModbusRegister(WriteableData write_data) { 
+void Innova::write_modbus_register(WriteableData write_data) { 
     uint8_t payload[] = {static_cast<uint8_t>(write_data.write_value >> 8), static_cast<uint8_t>(write_data.write_value)};
     send(write_data.function_value, write_data.register_value, 1, sizeof(payload), payload);
     this->waiting_for_write_ack_ = true;
@@ -191,10 +206,22 @@ void Innova::control(const climate::ClimateCall &call) {
     this->state_ = 1;
 }
 
+void Innova::set_key_lock(bool state) {
+    int new_prg = state ? (this->program_ | (1 << 4)) : (this->program_ & ~(1 << 4));
+    add_to_queue(CMD_WRITE_REG, new_prg, INNOVA_PROGRAM);
+    this->state_ = 1; // force modbus update
+}
+
 void Innova::dump_config() { 
     LOG_CLIMATE("", "Innova Climate", this); 
-    ESP_LOGCONFIG(TAG, "INNOVA:");
+    // ESP_LOGCONFIG(TAG, "INNOVA:");
     ESP_LOGCONFIG(TAG, "  Address: 0x%02X", this->address_);
+    // LOG_SENSOR("", "Air Temperature", this->air_temperature_sensor_);
+    // LOG_SENSOR("", "Water Temperature", this->water_temperature_sensor_);
+    // LOG_SENSOR("", "FAN speed", this->fan_speed_sensor_);
+    // LOG_SENSOR("", "Setpoint", this->setpoint_sensor_);  
+    // LOG_BINARY_SENSOR("", "Boiler relay", this->boiler_relay_sensor_);  
+    // LOG_BINARY_SENSOR("", "Chiller relay", this->chiller_relay_sensor_); 
 }
 
 }  // namespace innova

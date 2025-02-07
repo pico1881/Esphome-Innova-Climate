@@ -33,11 +33,34 @@ external_components:
   - source:
       type: git
       url: https://github.com/pico1881/Esphome-Innova-Climate
-      ref: main
+      ref: dev
     components: [ innova_climate ]
     refresh: 5s
 
 climate:
   - platform: innova_climate
     name: "Innova Climate"
-    address: 9
+    address: 9  #set device modbus address
+    update_interval: 30s
+    
+    #optional Air temperature sensor
+    air_temperature:
+      name: ${name} air temp
+    #optional Water temperature sensor
+    water_temperature:
+      name: ${name} water temp   
+    #optional Fan Speed sensor
+    fan_speed:
+      name: ${name} fan speed
+    #optional Temperature setpoint sensor    
+    setpoint:
+      name: ${name} setpoint   
+    #optional binary sensor for output status of boiler relay 
+    boiler_relay:
+      name: ${name} boiler relay
+    #optional binary sensor for output status of chiller relay 
+    chiller_relay:    
+      name: ${name} chiller relay
+    #optional switch for lock the on-board device keyboard 
+    key_lock_switch:
+      name: ${name} key lock
