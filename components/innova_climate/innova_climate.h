@@ -25,13 +25,18 @@ class Innova : public esphome::climate::Climate, public PollingComponent, public
   void set_setpoint_sensor(sensor::Sensor *setpoint_sensor) { setpoint_sensor_ = setpoint_sensor; }
   void set_boiler_relay_sensor(binary_sensor::BinarySensor *boiler_relay_sensor) { boiler_relay_sensor_ = boiler_relay_sensor; }
   void set_chiller_relay_sensor(binary_sensor::BinarySensor *chiller_relay_sensor) { chiller_relay_sensor_ = chiller_relay_sensor; }
-
+  void setLockSwitch(switch_::Switch *lockSwitch)
+      {
+        this->lockSwitch = lockSwitch;
+      };
   void setup() override;
   void loop() override;
   void dump_config() override;
   void update() override;
   void on_modbus_data(const std::vector<uint8_t> &data) override;
   void add_to_queue(uint8_t function, uint8_t new_value, uint16_t address);
+  
+  void setLock(bool state);
 
   climate::ClimateTraits traits() override {
     auto traits = climate::ClimateTraits();
@@ -54,6 +59,8 @@ class Innova : public esphome::climate::Climate, public PollingComponent, public
     });
     return traits;
   }
+private:
+switch_::Switch *lockSwitch;
 
  protected:
   int state_{0};
