@@ -26,10 +26,7 @@ class Innova : public esphome::climate::Climate, public PollingComponent, public
   void set_setpoint_sensor(sensor::Sensor *setpoint_sensor) { setpoint_sensor_ = setpoint_sensor; }
   void set_boiler_relay_sensor(binary_sensor::BinarySensor *boiler_relay_sensor) { boiler_relay_sensor_ = boiler_relay_sensor; }
   void set_chiller_relay_sensor(binary_sensor::BinarySensor *chiller_relay_sensor) { chiller_relay_sensor_ = chiller_relay_sensor; }
-  void setLockSwitch(switch_::Switch *lockSwitch)
-      {
-        this->lockSwitch = lockSwitch;
-      };
+  void setLockSwitch(switch_::Switch *lockSwitch) { lockSwitch = lockSwitch; }
   void setup() override;
   void loop() override;
   void dump_config() override;
