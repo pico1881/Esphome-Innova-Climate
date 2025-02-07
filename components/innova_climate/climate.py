@@ -1,6 +1,6 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import climate, modbus, sensor, binary_sensor
+from esphome.components import climate, modbus, sensor, binary_sensor, switch
 
 from esphome.const import (
     CONF_ID,
@@ -14,10 +14,9 @@ from esphome.const import (
     ICON_FAN,
 )
 
-AUTO_LOAD = ['modbus', 'sensor', 'binary_sensor']
+AUTO_LOAD = ['modbus', 'sensor', 'binary_sensor', "switch"]
 
 innova_ns = cg.esphome_ns.namespace("innova")
-
 Innova = innova_ns.class_("Innova", climate.Climate, cg.PollingComponent, modbus.ModbusDevice)
 
 KeyLockSwitch = innova_ns.class_("KeyLockSwitch", switch.Switch)
