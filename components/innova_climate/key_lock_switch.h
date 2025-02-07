@@ -6,7 +6,7 @@
 namespace esphome {
 namespace innova {
 
-class LockSwitch : public switch_::Switch, public Parented<Innova> {
+class InnovaSwitch : public switch_::Switch, public Parented<Innova> {
 
 protected:
   void write_state(bool state) override
