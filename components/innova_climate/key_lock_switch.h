@@ -1,7 +1,7 @@
 #pragma once
 
 #include "esphome/components/switch/switch.h"
-#include "innova.h"
+#include "innova_climate.h"
 
 namespace esphome {
 namespace innova {
