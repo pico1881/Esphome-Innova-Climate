@@ -4,7 +4,6 @@ from esphome.components import climate, modbus, sensor, binary_sensor, switch
 
 from esphome.const import (
     CONF_ID,
-    CONF_TEMPERATURE,
     DEVICE_CLASS_TEMPERATURE,
     DEVICE_CLASS_SPEED,
     DEVICE_CLASS_EMPTY,
@@ -18,8 +17,7 @@ AUTO_LOAD = ['modbus', 'sensor', 'binary_sensor', "switch"]
 
 innova_ns = cg.esphome_ns.namespace("innova")
 Innova = innova_ns.class_("Innova", climate.Climate, cg.PollingComponent, modbus.ModbusDevice)
-
-LockSwitch = innova_ns.class_("LockSwitch", switch.Switch)
+KeyLockSwitch = innova_ns.class_("KeyLockSwitch", switch.Switch)
 
 CONF_INNOVA_ID = 'innova_id'
 CONF_WATER_TEMPERATURE = "water_temperature"
@@ -31,7 +29,7 @@ CONF_CHILLER_RELAY = "chiller_relay"
 CONF_KEY_LOCK_SWITCH = "key_lock_switch"
 
 KEY_LOCK_SCHEMA = switch.SWITCH_SCHEMA.extend(
-    {cv.GenerateID(CONF_ID): cv.declare_id(LockSwitch)}
+    {cv.GenerateID(CONF_ID): cv.declare_id(KeyLockSwitch)}
 )
 
 
