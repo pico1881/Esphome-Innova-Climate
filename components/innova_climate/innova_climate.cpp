@@ -230,7 +230,6 @@ void Innova::dump_config() {
     LOG_SENSOR("", "Setpoint", this->setpoint_sensor_);  
     LOG_BINARY_SENSOR("", "Boiler relay", this->boiler_relay_sensor_);  
     LOG_BINARY_SENSOR("", "Chiller relay", this->chiller_relay_sensor_); 
-    LOG_SWITCH("", "Innova Switch", this->key_lock_switch);
 }
 
 }  // namespace innova
