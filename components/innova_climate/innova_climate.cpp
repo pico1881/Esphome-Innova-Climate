@@ -37,18 +37,21 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
     switch (this->state_) {
         case 1:
             this->current_temperature = f_value;
-			if (this->air_temperature_sensor_ != nullptr)
-               this->air_temperature_sensor_->publish_state(f_value);
+	    // if (this->air_temperature_sensor_ != nullptr)
+     //           this->air_temperature_sensor_->publish_state(f_value);
+	    update_sensor(this->air_temperature_sensor_, f_value);
         break;
         case 2:
             this->target_temperature = f_value;   
-            if (this->setpoint_sensor_ != nullptr)
-                this->setpoint_sensor_->publish_state(f_value);
+            // if (this->setpoint_sensor_ != nullptr)
+            //     this->setpoint_sensor_->publish_state(f_value);
+	    update_sensor(this->setpoint_sensor_, f_value);
         break;
         case 3:
             this->fan_speed_ = value;   
-            if (this->fan_speed_sensor_ != nullptr) 
-           	this->fan_speed_sensor_->publish_state(value); 
+            // if (this->fan_speed_sensor_ != nullptr) 
+           	// this->fan_speed_sensor_->publish_state(value); 
+		update_sensor(this->fan_speed_sensor_, value);
         break;
         case 4:
             this->program_ = value;   
@@ -64,7 +67,7 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
 	    if (this->key_lock_switch_ != nullptr)
        	       this->key_lock_switch_->publish_state(this->program_ & (0x0010));
   
-           //ESP_LOGD(TAG, "Program=%d", this->program_);
+           ESP_LOGD(TAG, "Program=%d", this->program_);
         break;
         case 5:
             this->season_ = value;   
@@ -87,8 +90,9 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
             }
         break;
         case 6:
-            if (this->water_temperature_sensor_ != nullptr)
-                this->water_temperature_sensor_->publish_state(f_value);
+            // if (this->water_temperature_sensor_ != nullptr)
+            //     this->water_temperature_sensor_->publish_state(f_value);
+		update_sensor(this->water_temperature_sensor_, f_value);
         break;
         case 7:
             if (this->boiler_relay_sensor_ != nullptr) {
@@ -212,6 +216,18 @@ void Innova::set_key_lock(bool state) {
     int new_prg = state ? (this->program_ | (1 << 4)) : (this->program_ & ~(1 << 4));
     add_to_queue(CMD_WRITE_REG, new_prg, INNOVA_PROGRAM);
     this->state_ = 1; // force modbus update
+}
+
+void Innova::update_sensor(sensor::Sensor *sensor, float value) {
+    if (sensor != nullptr) {
+        sensor->publish_state(value);
+    }
+}
+
+void Innova::update_sensor(sensor::Sensor *sensor, int value) {
+    if (sensor != nullptr) {
+        sensor->publish_state(value);
+    }
 }
 
 void Innova::dump_config() { 
