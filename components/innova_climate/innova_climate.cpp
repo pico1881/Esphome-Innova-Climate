@@ -37,15 +37,15 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
     switch (this->state_) {
         case 1:
             this->current_temperature = f_value;
-	        update_sensor(this->air_temperature_sensor_, f_value);
+	    update_sensor(this->air_temperature_sensor_, f_value);
             break;
         case 2:
             this->target_temperature = f_value;   
-	        update_sensor(this->setpoint_sensor_, f_value);
+	    update_sensor(this->setpoint_sensor_, f_value);
             break;
         case 3:
             this->fan_speed_ = value;   
-		    update_sensor(this->fan_speed_sensor_, value);
+	    update_sensor(this->fan_speed_sensor_, value);
             break;
         case 4:
             handle_program(value);
@@ -54,7 +54,7 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
             handle_season(value);
             break;
         case 6:
-		    update_sensor(this->water_temperature_sensor_, f_value);
+	    update_sensor(this->water_temperature_sensor_, f_value);
             break;
         case 7:
             if (this->boiler_relay_sensor_ != nullptr) {
@@ -222,7 +222,7 @@ void Innova::handle_season(int value) {
     } else {
         this->action = climate::CLIMATE_ACTION_IDLE;  
     }
-	ESP_LOGD(TAG, "Season=%d", this->season_);
+	//ESP_LOGD(TAG, "Season=%d", this->season_);
 }
 
 void Innova::dump_config() { 
