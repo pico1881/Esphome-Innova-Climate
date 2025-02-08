@@ -113,37 +113,33 @@ void Innova::write_modbus_register(WriteableData write_data) {
 void Innova::control(const climate::ClimateCall &call) {
     if (call.get_mode().has_value()) {
 	this->mode = *call.get_mode(); 
-	    
-        //int curr_prg = this->program_;
-        int new_prg;
-        //climate::ClimateMode mode = *call.get_mode();
-        switch (this->mode) {
-            case climate::CLIMATE_MODE_OFF:
-                new_prg = this->program_ | (1 << 7);
-                add_to_queue(CMD_WRITE_REG,new_prg, INNOVA_PROGRAM);
-                break;
-            case climate::CLIMATE_MODE_HEAT:
-                add_to_queue(CMD_WRITE_REG,3, INNOVA_SEASON);
-                new_prg = this->program_ & ~(1 << 7);  
-                add_to_queue(CMD_WRITE_REG,new_prg, INNOVA_PROGRAM);
-                break;
-            case climate::CLIMATE_MODE_COOL:
-                add_to_queue(CMD_WRITE_REG,5, INNOVA_SEASON);
-                new_prg = this->program_ & ~(1 << 7);
-                add_to_queue(CMD_WRITE_REG,new_prg, INNOVA_PROGRAM);
-                break;
-            default: 
-                //ESP_LOGW(TAG, "Unsupported mode: %d", mode); 
-                break;
-        }	    
-    }
+        
+    int new_prg;
+    switch (this->mode) {
+        case climate::CLIMATE_MODE_OFF:
+            new_prg = this->program_ | (1 << 7);
+            add_to_queue(CMD_WRITE_REG,new_prg, INNOVA_PROGRAM);
+            break;
+        case climate::CLIMATE_MODE_HEAT:
+            add_to_queue(CMD_WRITE_REG,3, INNOVA_SEASON);
+            new_prg = this->program_ & ~(1 << 7);  
+            add_to_queue(CMD_WRITE_REG,new_prg, INNOVA_PROGRAM);
+            break;
+        case climate::CLIMATE_MODE_COOL:
+            add_to_queue(CMD_WRITE_REG,5, INNOVA_SEASON);
+            new_prg = this->program_ & ~(1 << 7);
+            add_to_queue(CMD_WRITE_REG,new_prg, INNOVA_PROGRAM);
+            break;
+        default: 
+            //ESP_LOGW(TAG, "Unsupported mode: %d", mode); 
+            break;
+    }	    
+}
 
     if (call.get_fan_mode().has_value()) {
-        this->fan_mode = *call.get_fan_mode();	    
-	    
-        //int curr_prg = this->program_;
-        int new_prg = this->program_;
-        //climate::ClimateFanMode fan_mode = *call.get_fan_mode();
+        this->fan_mode = *call.get_fan_mode();	
+        
+        int new_prg;
         switch (this->fan_mode.value()) {
             case climate::CLIMATE_FAN_LOW:
                 new_prg = (this->program_ & ~(0b111)) | 2; 
@@ -169,7 +165,6 @@ void Innova::control(const climate::ClimateCall &call) {
         int target = *call.get_target_temperature() * 10;
         add_to_queue(CMD_WRITE_REG,target, INNOVA_SETPOINT);
     }
-    //this->publish_state();
     this->state_ = 1;
 }
 
@@ -209,26 +204,27 @@ void Innova::handle_program(int value) {
 }
 
 void Innova::handle_season(int value) {
-        this->season_ = value;   
-        if (this->season_ == 3 && !(this->program_ & (0x0080))) {
-            this->mode = climate::CLIMATE_MODE_HEAT;
-        } else if (this->season_ == 5 && !(this->program_ & (0x0080))) {
-            this->mode = climate::CLIMATE_MODE_COOL;
-        } else {
-            this->mode = climate::CLIMATE_MODE_OFF;
-        }
-        
-        if (this->season_ == 3 && this->fan_speed_ > 0) {
-            this->action = climate::CLIMATE_ACTION_HEATING;
-        } else if (this->season_ == 5 && this->fan_speed_ > 0) {
-             this->action = climate::CLIMATE_ACTION_COOLING;
-        } else if (this->program_ & (0x0080)) {
-            this->action = climate::CLIMATE_ACTION_OFF;	
-        } else {
-            this->action = climate::CLIMATE_ACTION_IDLE;  
-        }
+    this->season_ = value;   
+    if (this->season_ == 3 && !(this->program_ & (0x0080))) {
+        this->mode = climate::CLIMATE_MODE_HEAT;
+    } else if (this->season_ == 5 && !(this->program_ & (0x0080))) {
+        this->mode = climate::CLIMATE_MODE_COOL;
+    } else {
+        this->mode = climate::CLIMATE_MODE_OFF;
+    }
+    
+    if (this->season_ == 3 && this->fan_speed_ > 0) {
+        this->action = climate::CLIMATE_ACTION_HEATING;
+    } else if (this->season_ == 5 && this->fan_speed_ > 0) {
+         this->action = climate::CLIMATE_ACTION_COOLING;
+    } else if (this->program_ & (0x0080)) {
+        this->action = climate::CLIMATE_ACTION_OFF;	
+    } else {
+        this->action = climate::CLIMATE_ACTION_IDLE;  
+    }
 	ESP_LOGD(TAG, "Season=%d", this->season_);
 }
+
 void Innova::dump_config() { 
     LOG_CLIMATE("", "Innova Climate", this); 
     // ESP_LOGCONFIG(TAG, "INNOVA:");
