@@ -155,7 +155,7 @@ void Innova::control(const climate::ClimateCall &call) {
         //int curr_prg = this->program_;
         int new_prg;
         climate::ClimateMode mode = *call.get_mode();
-        switch (mode) {
+        switch (this->mode) {
             case climate::CLIMATE_MODE_OFF:
                 new_prg = this->program_ | (1 << 7);
                 add_to_queue(CMD_WRITE_REG,new_prg, INNOVA_PROGRAM);
@@ -183,7 +183,7 @@ void Innova::control(const climate::ClimateCall &call) {
         //int curr_prg = this->program_;
         int new_prg;
         climate::ClimateFanMode fan_mode = *call.get_fan_mode();
-        switch (fan_mode) {
+        switch (this->fan_mode) {
             case climate::CLIMATE_FAN_LOW:
                 new_prg = (this->program_ & ~(0b111)) | 2; 
             break;
