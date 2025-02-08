@@ -69,6 +69,14 @@ class Innova : public esphome::climate::Climate, public PollingComponent, public
   std::deque<WriteableData>writequeue_;
   void write_modbus_register(WriteableData write_data);
 
+  void update_sensor(sensor::Sensor *sensor, float value);
+  void update_sensor(sensor::Sensor *sensor, int value);
+  void handle_program(int value);
+  void handle_season(int value);
+  void update_relay_sensors(int value);
+  void handle_mode(climate::ClimateMode mode);
+  void handle_fan_mode(climate::ClimateFanMode fan_mode);
+
   void control(const climate::ClimateCall &call) override; 
 
   sensor::Sensor *air_temperature_sensor_{nullptr};
