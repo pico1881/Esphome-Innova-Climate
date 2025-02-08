@@ -39,19 +39,19 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
             this->current_temperature = f_value;
 	    // if (this->air_temperature_sensor_ != nullptr)
      //           this->air_temperature_sensor_->publish_state(f_value);
-	    update_sensor(this->air_temperature_sensor_, f_value);
+	        update_sensor(this->air_temperature_sensor_, f_value);
         break;
         case 2:
             this->target_temperature = f_value;   
             // if (this->setpoint_sensor_ != nullptr)
             //     this->setpoint_sensor_->publish_state(f_value);
-	    update_sensor(this->setpoint_sensor_, f_value);
+	        update_sensor(this->setpoint_sensor_, f_value);
         break;
         case 3:
             this->fan_speed_ = value;   
             // if (this->fan_speed_sensor_ != nullptr) 
            	// this->fan_speed_sensor_->publish_state(value); 
-		update_sensor(this->fan_speed_sensor_, value);
+		    update_sensor(this->fan_speed_sensor_, value);
         break;
         case 4:
             this->program_ = value;   
@@ -92,7 +92,7 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
         case 6:
             // if (this->water_temperature_sensor_ != nullptr)
             //     this->water_temperature_sensor_->publish_state(f_value);
-		update_sensor(this->water_temperature_sensor_, f_value);
+		    update_sensor(this->water_temperature_sensor_, f_value);
         break;
         case 7:
             if (this->boiler_relay_sensor_ != nullptr) {
