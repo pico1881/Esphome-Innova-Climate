@@ -53,7 +53,7 @@ CONFIG_SCHEMA = (
             cv.Optional(CONF_FAN_SPEED): sensor.sensor_schema(
                 unit_of_measurement=UNIT_REVOLUTIONS_PER_MINUTE,
                 accuracy_decimals=0,
-                device_class=DEVICE_CLASS_SPEED,
+                device_class=DEVICE_CLASS_EMPTY,
                 state_class=STATE_CLASS_MEASUREMENT,
                 icon=ICON_FAN,
             ),
