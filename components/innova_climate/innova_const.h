@@ -3,7 +3,6 @@
 namespace esphome {
 namespace innova {
 
-
 static const uint8_t CMD_READ_REG = 0x03;
 static const uint8_t CMD_WRITE_REG = 0x06;
 static const uint16_t INNOVA_AIR_TEMPERATURE = 0x00;    // reg 0
