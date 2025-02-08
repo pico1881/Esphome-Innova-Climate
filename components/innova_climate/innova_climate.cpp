@@ -146,24 +146,25 @@ void Innova::write_modbus_register(WriteableData write_data) {
 
 void Innova::control(const climate::ClimateCall &call) {
     if (call.get_mode().has_value()) {
-        int curr_prg = this->program_;
-        int new_prg = curr_prg;
-        this->mode = *call.get_mode();
+	this->mode = *call.get_mode(); 
+	    
+        //int curr_prg = this->program_;
+        int new_prg;
         climate::ClimateMode mode = *call.get_mode();
         switch (mode) {
             case climate::CLIMATE_MODE_OFF:
-                new_prg = curr_prg | (1 << 7);
+                new_prg = this->program_ | (1 << 7);
                 add_to_queue(CMD_WRITE_REG,new_prg, INNOVA_PROGRAM);
 		
             break;
             case climate::CLIMATE_MODE_HEAT:
                 add_to_queue(CMD_WRITE_REG,3, INNOVA_SEASON);
-                new_prg = curr_prg & ~(1 << 7);  
+                new_prg = this->program_ & ~(1 << 7);  
                 add_to_queue(CMD_WRITE_REG,new_prg, INNOVA_PROGRAM);
             break;
             case climate::CLIMATE_MODE_COOL:
                 add_to_queue(CMD_WRITE_REG,5, INNOVA_SEASON);
-                new_prg = curr_prg & ~(1 << 7);
+                new_prg = this->program_ & ~(1 << 7);
                 add_to_queue(CMD_WRITE_REG,new_prg, INNOVA_PROGRAM);
             break;
             default: 
@@ -173,25 +174,26 @@ void Innova::control(const climate::ClimateCall &call) {
     }
 
     if (call.get_fan_mode().has_value()) {
-        int curr_prg = this->program_;
-        int new_prg = curr_prg;
-        this->fan_mode = *call.get_fan_mode();
+        this->fan_mode = *call.get_fan_mode();	    
+	    
+        //int curr_prg = this->program_;
+        int new_prg;
         climate::ClimateFanMode fan_mode = *call.get_fan_mode();
         switch (fan_mode) {
             case climate::CLIMATE_FAN_LOW:
-                new_prg = (curr_prg & ~(0b111)) | 2; 
+                new_prg = (this->program_ & ~(0b111)) | 2; 
             break;
             case climate::CLIMATE_FAN_MEDIUM: 
-                new_prg = (curr_prg & ~(0b111)) | 1; 
+                new_prg = (this->program_ & ~(0b111)) | 1; 
             break;
             case climate::CLIMATE_FAN_HIGH:
-                new_prg = (curr_prg & ~(0b111)) | 3;
+                new_prg = (this->program_ & ~(0b111)) | 3;
             break;
             case climate::CLIMATE_FAN_AUTO: 
-                new_prg = (curr_prg & ~(0b111)); 
+                new_prg = (this->program_ & ~(0b111)); 
             break;
             default: 
-                new_prg = (curr_prg & ~(0b111)) | 1;
+                new_prg = (this->program_ & ~(0b111)) | 1;
             break;
         }
         add_to_queue(CMD_WRITE_REG, new_prg, INNOVA_PROGRAM);
