@@ -227,6 +227,7 @@ void Innova::handle_season(int value) {
         } else {
             this->action = climate::CLIMATE_ACTION_IDLE;  
         }
+	ESP_LOGD(TAG, "Season=%d", this->season_);
 }
 void Innova::dump_config() { 
     LOG_CLIMATE("", "Innova Climate", this); 
