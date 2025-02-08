@@ -183,7 +183,7 @@ void Innova::control(const climate::ClimateCall &call) {
         //int curr_prg = this->program_;
         int new_prg;
         climate::ClimateFanMode fan_mode = *call.get_fan_mode();
-        switch (this->fan_mode) {
+        switch (this->fan_mode.value()) {
             case climate::CLIMATE_FAN_LOW:
                 new_prg = (this->program_ & ~(0b111)) | 2; 
             break;
