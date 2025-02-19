@@ -40,7 +40,8 @@ Connect all as this schematic, don't forget to apply jumper at RTU pin on the In
 
 ### Software
 
-To use this component in your ESPHome configuration, follow the example below:
+To use this component in your ESPHome configuration, follow the example below.
+NOTE: verify the modbus address of fancoil board, default is 1, refer to the attached manual for advanced settings.
 
 #### Example configuration
 
