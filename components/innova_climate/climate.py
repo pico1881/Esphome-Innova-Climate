@@ -3,7 +3,6 @@ import esphome.config_validation as cv
 from esphome.components import climate, modbus, sensor, binary_sensor, switch
 
 from esphome.const import (
-    CONF_ID,
     DEVICE_CLASS_TEMPERATURE,
     DEVICE_CLASS_SPEED,
     DEVICE_CLASS_EMPTY,
@@ -35,9 +34,9 @@ KEY_LOCK_SCHEMA = switch.SWITCH_SCHEMA.extend(
 
 
 CONFIG_SCHEMA = (
-    climate.CLIMATE_SCHEMA.extend(
+    climate.climate_schema(Innova)
+    .extend(
         {
-            cv.GenerateID(): cv.declare_id(Innova),
             cv.Optional(CONF_AIR_TEMPERATURE): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=1,
@@ -77,9 +76,10 @@ CONFIG_SCHEMA = (
 )
 
 async def to_code(config):
-    var = cg.new_Pvariable(config[CONF_ID])
+
+    var = await climate.new_climate(config)
     await cg.register_component(var, config)
-    await climate.register_climate(var, config)
+
     await modbus.register_modbus_device(var, config)
 
     if CONF_AIR_TEMPERATURE in config:
