@@ -29,13 +29,13 @@ CONF_BOILER_RELAY = "boiler_relay"
 CONF_CHILLER_RELAY = "chiller_relay"
 CONF_KEY_LOCK_SWITCH = "key_lock_switch"
 
-KEY_LOCK_SCHEMA = switch.switch_schema.extend(
+KEY_LOCK_SCHEMA = switch.SWITCH_SCHEMA.extend(
     {cv.GenerateID(CONF_ID): cv.declare_id(InnovaSwitch)}
 )
 
 
 CONFIG_SCHEMA = (
-    climate.climate_schema.extend(
+    climate.CLIMATE_SCHEMA.extend(
         {
             cv.GenerateID(): cv.declare_id(Innova),
             cv.Optional(CONF_AIR_TEMPERATURE): sensor.sensor_schema(
