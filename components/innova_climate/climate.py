@@ -29,9 +29,14 @@ CONF_BOILER_RELAY = "boiler_relay"
 CONF_CHILLER_RELAY = "chiller_relay"
 CONF_KEY_LOCK_SWITCH = "key_lock_switch"
 
-KEY_LOCK_SCHEMA = switch.SWITCH_SCHEMA.extend(
-    {cv.GenerateID(CONF_ID): cv.declare_id(InnovaSwitch)}
+
+KEY_LOCK_SCHEMA = (
+    switch.switch_schema(InnovaSwitch)
+    .extend(
+        {cv.GenerateID(CONF_ID): cv.declare_id(InnovaSwitch)}    
+    )
 )
+
 
 
 CONFIG_SCHEMA = (
