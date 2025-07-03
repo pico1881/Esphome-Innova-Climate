@@ -38,7 +38,7 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
         case 1:
             this->current_temperature = f_value;
 			if (this->air_temperature_sensor_ != nullptr)
-               this->air_temperature_sensor_->publish_state(f_value * 0.1f);
+               this->air_temperature_sensor_->publish_state(f_value);
         break;
         case 2:
             this->target_temperature = f_value;   
