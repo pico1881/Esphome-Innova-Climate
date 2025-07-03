@@ -3,6 +3,7 @@ import esphome.config_validation as cv
 from esphome.components import climate, modbus, sensor, binary_sensor, switch
 
 from esphome.const import (
+    CONF_ID,
     DEVICE_CLASS_TEMPERATURE,
     DEVICE_CLASS_SPEED,
     DEVICE_CLASS_EMPTY,
