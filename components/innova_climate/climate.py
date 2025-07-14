@@ -29,20 +29,15 @@ CONF_BOILER_RELAY = "boiler_relay"
 CONF_CHILLER_RELAY = "chiller_relay"
 CONF_KEY_LOCK_SWITCH = "key_lock_switch"
 
-
-KEY_LOCK_SCHEMA = (
-    switch.switch_schema(InnovaSwitch)
-    .extend(
-        {cv.GenerateID(CONF_ID): cv.declare_id(InnovaSwitch)}    
-    )
+KEY_LOCK_SCHEMA = switch.SWITCH_SCHEMA.extend(
+    {cv.GenerateID(CONF_ID): cv.declare_id(InnovaSwitch)}
 )
 
 
-
 CONFIG_SCHEMA = (
-    climate.climate_schema(Innova)
-    .extend(
+    climate.CLIMATE_SCHEMA.extend(
         {
+            cv.GenerateID(): cv.declare_id(Innova),
             cv.Optional(CONF_AIR_TEMPERATURE): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=1,
@@ -82,10 +77,9 @@ CONFIG_SCHEMA = (
 )
 
 async def to_code(config):
-
-    var = await climate.new_climate(config)
+    var = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(var, config)
-
+    await climate.register_climate(var, config)
     await modbus.register_modbus_device(var, config)
 
     if CONF_AIR_TEMPERATURE in config:
