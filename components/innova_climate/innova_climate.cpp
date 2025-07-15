@@ -6,7 +6,7 @@ namespace esphome {
 namespace innova {
 
 static const char *const TAG = "innova";
-static const uint16_t REGISTER[] = {INNOVA_AIR_TEMPERATURE, INNOVA_SETPOINT, INNOVA_FAN_SPEED, INNOVA_PROGRAM, INNOVA_SEASON, INNOVA_WATER_TEMPERATURE, INNOVA_OUT};
+static const uint16_t REGISTER[] = {INNOVA_AIR_TEMPERATURE, INNOVA_SETPOINT, INNOVA_PROGRAM, INNOVA_SEASON};
 
 void Innova::setup() {}
 
@@ -45,12 +45,8 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
             if (this->setpoint_sensor_ != nullptr)
                 this->setpoint_sensor_->publish_state(f_value);
         break;
+
         case 3:
-            this->fan_speed_ = value;   
-            if (this->fan_speed_sensor_ != nullptr) 
-           	this->fan_speed_sensor_->publish_state(value); 
-        break;
-        case 4:
             this->program_ = value;   
             climate::ClimateFanMode fmode;
             switch ((int) value & 0b111) {
@@ -66,7 +62,7 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
   
            //ESP_LOGD(TAG, "Program=%d", this->program_);
         break;
-        case 5:
+        case 4:
             this->season_ = value;   
             if (this->season_ == 3 && !(this->program_ & (0x0080))) {
                 this->mode = climate::CLIMATE_MODE_HEAT;
@@ -76,30 +72,10 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
                 this->mode = climate::CLIMATE_MODE_OFF;
             }
             
-            if (this->season_ == 3 && this->fan_speed_ > 0) {
-                this->action = climate::CLIMATE_ACTION_HEATING;
-            } else if (this->season_ == 5 && this->fan_speed_ > 0) {
-                 this->action = climate::CLIMATE_ACTION_COOLING;
-            } else if (this->program_ & (0x0080)) {
-                this->action = climate::CLIMATE_ACTION_OFF;	
-            } else {
-                this->action = climate::CLIMATE_ACTION_IDLE;  
-            }
         break;
-        case 6:
-            if (this->water_temperature_sensor_ != nullptr)
-                this->water_temperature_sensor_->publish_state(f_value);
-        break;
-        case 7:
-            if (this->boiler_relay_sensor_ != nullptr) {
-                this->boiler_relay_sensor_->publish_state((value & (0x0008)) != 0); 
-            }
-            if (this->chiller_relay_sensor_ != nullptr) {
-                this->chiller_relay_sensor_->publish_state((value & (0x0004)) != 0); 
-            }
-        break;
+
     }
-    if (++this->state_ > 7){
+    if (++this->state_ > 4){
         this->state_ = 0;
     	this->publish_state();
     }
