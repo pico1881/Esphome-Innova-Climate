@@ -20,8 +20,7 @@ struct WriteableData
 class Innova : public esphome::climate::Climate, public PollingComponent, public modbus::ModbusDevice {
  public:
   void set_air_temperature_sensor(sensor::Sensor *air_temperature_sensor) { air_temperature_sensor_ = air_temperature_sensor; }
-
-
+  void set_alarm_sensor(sensor::Sensor *alarm_sensor) { alarm_sensor_ = alarm_sensor; }
   void set_setpoint_sensor(sensor::Sensor *setpoint_sensor) { setpoint_sensor_ = setpoint_sensor; }
 
   void set_key_lock_switch(switch_::Switch *key_lock_switch) { key_lock_switch_ = key_lock_switch; }
@@ -61,7 +60,7 @@ class Innova : public esphome::climate::Climate, public PollingComponent, public
   bool waiting_{false};
   uint32_t last_send_{0};
   bool waiting_for_write_ack_{false};
-  int fan_speed_{0};
+  int alarm_{0};
   int program_{0};
   int season_{0};
   std::deque<WriteableData>writequeue_;
@@ -70,6 +69,7 @@ class Innova : public esphome::climate::Climate, public PollingComponent, public
   void control(const climate::ClimateCall &call) override; 
 
   sensor::Sensor *air_temperature_sensor_{nullptr};
+  sensor::Sensor *alarm_sensor_{nullptr};
 
   sensor::Sensor *setpoint_sensor_{nullptr};
 
