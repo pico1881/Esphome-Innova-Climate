@@ -12,7 +12,7 @@ static const uint16_t INNOVA_FAN_SPEED = 0x0F;          // reg 15
 static const uint16_t INNOVA_PROGRAM = 0xC9;            // reg 201
 static const uint16_t INNOVA_SEASON = 0xE9;             // reg 233
 static const uint16_t INNOVA_SETPOINT = 0xE7;           // reg 231
-static const uint16_t INNOVA_OUT = 0x09;           	// reg 9
+static const uint16_t INNOVA_OUT = 0x69;           	// reg 105
 
 }  // namespace innova
 }  // namespace esphome
