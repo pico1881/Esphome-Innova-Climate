@@ -21,7 +21,7 @@ InnovaSwitch = innova_ns.class_("InnovaSwitch", switch.Switch)
 CONF_INNOVA_ID = 'innova_id'
 
 CONF_AIR_TEMPERATURE = "air_temperature"
-
+ICON_ALARM_LIGHT = "mdi:alarm-light"
 CONF_SETPOINT = "setpoint"
 CONF_ALARM = "alarm"
 CONF_KEY_LOCK_SWITCH = "key_lock_switch"
@@ -50,6 +50,7 @@ CONFIG_SCHEMA = (
             cv.Optional(CONF_ALARM): sensor.sensor_schema(
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_EMPTY,
+                icon=ICON_ALARM_LIGHT,
             ),
             cv.Optional(CONF_KEY_LOCK_SWITCH): KEY_LOCK_SCHEMA
         }
