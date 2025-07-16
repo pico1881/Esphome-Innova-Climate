@@ -5,6 +5,7 @@ from esphome.components import climate, modbus, sensor, switch
 from esphome.const import (
     CONF_ID,
     DEVICE_CLASS_TEMPERATURE,
+    DEVICE_CLASS_EMPTY,
     STATE_CLASS_MEASUREMENT,
     UNIT_CELSIUS,
     ICON_FAN,
@@ -22,7 +23,7 @@ CONF_INNOVA_ID = 'innova_id'
 CONF_AIR_TEMPERATURE = "air_temperature"
 
 CONF_SETPOINT = "setpoint"
-
+CONF_ALARM = "alarm"
 CONF_KEY_LOCK_SWITCH = "key_lock_switch"
 
 KEY_LOCK_SCHEMA = switch.SWITCH_SCHEMA.extend(
@@ -46,6 +47,10 @@ CONFIG_SCHEMA = (
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
+            cv.Optional(CONF_ALARM): sensor.sensor_schema(
+                accuracy_decimals=0,
+                device_class=DEVICE_CLASS_EMPTY,
+            ),
             cv.Optional(CONF_KEY_LOCK_SWITCH): KEY_LOCK_SCHEMA
         }
     )
@@ -67,6 +72,10 @@ async def to_code(config):
         conf = config[CONF_SETPOINT]
         sens = await sensor.new_sensor(conf)
         cg.add(var.set_setpoint_sensor(sens))
+    if CONF_ALARM in config:
+        conf = config[CONF_ALARM]
+        sens = await sensor.new_sensor(conf)
+        cg.add(var.set_alarm_sensor(sens))        
     if CONF_KEY_LOCK_SWITCH in config: 
         conf = config[CONF_KEY_LOCK_SWITCH]
         swt = await switch.new_switch(conf)
