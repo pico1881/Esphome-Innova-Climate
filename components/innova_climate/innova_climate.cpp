@@ -6,7 +6,7 @@ namespace esphome {
 namespace innova {
 
 static const char *const TAG = "innova";
-static const uint16_t REGISTER[] = {INNOVA_AIR_TEMPERATURE, INNOVA_SETPOINT, INNOVA_PROGRAM, INNOVA_SEASON};
+static const uint16_t REGISTER[] = {INNOVA_AIR_TEMPERATURE, INNOVA_SETPOINT, INNOVA_PROGRAM, INNOVA_SEASON, INNOVA_ALARM};
 
 void Innova::setup() {}
 
@@ -73,9 +73,13 @@ void Innova::on_modbus_data(const std::vector<uint8_t> &data) {
             }
             
         break;
-
+        case 5:
+            this->alarm_ = value;   
+            if (this->alarm_sensor_ != nullptr) 
+           	this->alarm_sensor_->publish_state(value); 
+        break;
     }
-    if (++this->state_ > 4){
+    if (++this->state_ > 5){
         this->state_ = 0;
     	this->publish_state();
     }
