@@ -34,6 +34,7 @@ KEY_LOCK_SCHEMA = (
     .extend(
         {cv.GenerateID(CONF_ID): cv.declare_id(InnovaSwitch)}    
     )
+)  
 
 CONFIG_SCHEMA = (
     climate.climate_schema(Innova)
